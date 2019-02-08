@@ -1,28 +1,28 @@
 {
-  "name": "react-cli",
+  "name": "reacli",
   "version": "1.0.0",
   "description": "",
-  "main": "./dist/bin/react-cli.js",
+  "main": "./dist/bin/reacli.js",
   "scripts": {
     "precommit": "npm run lint && npm run build && npm test",
     "test": "npm run build && jest",
-    "build": "rimraf dist/ && babel ./ --out-dir dist/ --ignore ./node_modules,./.babelrc,./package.json,./npm-debug.log,./patterns --copy-files",
+    "build": "rimraf dist/ && babel ./ --out-dir dist/ --ignore ./node_modules,./.babelrc,./package.json,./package-lock.json,./npm-debug.log,./patterns --copy-files",
     "commitmsg": "commitlint -e $GIT_PARAMS",
     "lint": "eslint ./src/*.js ./src/utils/*.js ./bin/*.js"
   },
   "bin": {
-    "reacli": "./dist/bin/react-cli.js"
+    "reacli": "./dist/bin/reacli.js"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/tanohzana/react-cli.git"
+    "url": "git+https://github.com/tanohzana/reacli.git"
   },
   "author": "Tanohzana <tanohzana@gmail.com>",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/tanohzana/react-cli/issues"
+    "url": "https://github.com/tanohzana/reacli/issues"
   },
-  "homepage": "https://github.com/tanohzana/react-cli#readme",
+  "homepage": "https://github.com/tanohzana/reacli#readme",
   "devDependencies": {
     "@commitlint/cli": "^7.0.0",
     "@commitlint/config-conventional": "^7.0.1",
