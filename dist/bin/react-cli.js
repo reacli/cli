@@ -19,32 +19,46 @@ var _isWindows2 = _interopRequireDefault(_isWindows);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+// Validate name
 var validateName = function validateName(path) {
-	// Validate name
+	console.log("Valid: " + path);
+
 	return true;
 };
 
+// Validate path
 var validatePath = function validatePath(path) {
-	// Validate path
+	console.log("Valid: " + path);
+
 	return true;
 };
 
 var getFolderName = function getFolderName(path) {
 	if ((0, _isWindows2.default)()) {
-		var splitString = path.split("\\");
-
-		return splitString[splitString.length - 1];
-	} else {
-		var _splitString = path.split("/");
+		var _splitString = path.split("\\");
 
 		return _splitString[_splitString.length - 1];
 	}
+
+	var splitString = path.split("/");
+
+	return splitString[splitString.length - 1];
 };
 
 var makeComponentName = function makeComponentName(folderName) {
 	return folderName.split("-").map(function (word) {
 		return word[0].toUpperCase() + word.substr(1);
 	}).join("");
+};
+
+var makePath = function makePath(path) {
+	var realPath = _path2.default.join(".", path);
+
+	if ((0, _isWindows2.default)()) {
+		return _path2.default.win32.normalize(realPath);
+	}
+
+	return realPath;
 };
 
 var createFiles = function createFiles(path, componentName, dumbString, containerString, indexString) {
@@ -55,25 +69,33 @@ var createFiles = function createFiles(path, componentName, dumbString, containe
 	var indexPath = makePath(_path2.default.join(path, "index.js"));
 
 	_fs2.default.writeFile(indexPath, indexString, "utf8", function (err) {
-		if (err) throw err;
+		if (err) {
+			throw err;
+		}
 
 		console.log("Index created !");
 	});
 
 	_fs2.default.writeFile(dumbComponentPath, dumbString, "utf8", function (err) {
-		if (err) throw err;
+		if (err) {
+			throw err;
+		}
 
 		console.log("Dumb component created !");
 	});
 
 	_fs2.default.writeFile(containerPath, containerString, "utf8", function (err) {
-		if (err) throw err;
+		if (err) {
+			throw err;
+		}
 
 		console.log("Container component created !");
 	});
 
 	_fs2.default.writeFile(styleSheetPath, "", "utf8", function (err) {
-		if (err) throw err;
+		if (err) {
+			throw err;
+		}
 
 		console.log("StyleSheet created !");
 	});
@@ -106,7 +128,7 @@ var createComponent = function createComponent(path) {
 
 	var componentsPath = makePath(_path2.default.join(path, "components"));
 
-	// mkdirSync recursive not working
+	// MkdirSync recursive not working
 	_fs2.default.mkdirSync(path);
 	_fs2.default.mkdirSync(componentsPath);
 
@@ -117,22 +139,11 @@ var createComponent = function createComponent(path) {
 	createFiles(path, componentName, dumbString, containerString, indexString);
 };
 
-var makePath = function makePath(path) {
-	var realPath = _path2.default.join(".", path);
-
-	if ((0, _isWindows2.default)()) {
-		return _path2.default.win32.normalize(realPath);
-	} else {
-		return realPath;
-	}
-};
-
 var reactCli = function reactCli(args) {
 	var firstParam = args.shift();
 	var secondParam = args.shift();
 
-	// TO create a component:
-	// recli component <path>
+	// Cmd reacli component <path> creates a component architecture
 	if (firstParam === "component") {
 		var path = makePath(secondParam);
 

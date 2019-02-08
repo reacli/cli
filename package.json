@@ -4,11 +4,11 @@
   "description": "",
   "main": "./dist/bin/reacli.js",
   "scripts": {
-    "precommit": "npm run lint && npm run build && npm test",
-    "test": "npm run build && jest",
+    "precommit": "npm run lint && npm run build && npm run test",
+    "test": "echo 'no test yet'",
     "build": "rimraf dist/ && babel ./ --out-dir dist/ --ignore ./node_modules,./.babelrc,./package.json,./package-lock.json,./npm-debug.log,./patterns --copy-files",
     "commitmsg": "commitlint -e $GIT_PARAMS",
-    "lint": "eslint ./src/*.js ./src/utils/*.js ./bin/*.js"
+    "lint": "eslint ./bin/*.js"
   },
   "bin": {
     "reacli": "./dist/bin/reacli.js"
