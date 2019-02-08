@@ -6,7 +6,7 @@
   "scripts": {
     "precommit": "npm run lint && npm run build && npm test",
     "test": "npm run build && jest",
-    "build": "rimraf dist/ && babel ./ --out-dir dist/ --ignore ./node_modules,./.babelrc,./package.json,./npm-debug.log --copy-files",
+    "build": "rimraf dist/ && babel ./ --out-dir dist/ --ignore ./node_modules,./.babelrc,./package.json,./npm-debug.log,./patterns --copy-files",
     "commitmsg": "commitlint -e $GIT_PARAMS",
     "lint": "eslint ./src/*.js ./src/utils/*.js ./bin/*.js"
   },
