@@ -13,10 +13,11 @@ var _path = require("path");
 
 var _path2 = _interopRequireDefault(_path);
 
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+var _isWindows = require("is-windows");
 
-// @TODO: Change this
-var isWindows = true;
+var _isWindows2 = _interopRequireDefault(_isWindows);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var validateName = function validateName(path) {
 	// Validate name
@@ -29,7 +30,7 @@ var validatePath = function validatePath(path) {
 };
 
 var getFolderName = function getFolderName(path) {
-	if (isWindows) {
+	if ((0, _isWindows2.default)()) {
 		var splitString = path.split("\\");
 
 		return splitString[splitString.length - 1];
@@ -46,30 +47,36 @@ var makeComponentName = function makeComponentName(folderName) {
 	}).join("");
 };
 
-var createFiles = function createFiles(dumbString, containerString) {
-	// This should create files
-	console.log("creating files...");
-};
+var createFiles = function createFiles(path, componentName, dumbString, containerString, indexString) {
+	var componentsPath = makePath(_path2.default.join(path, "components"));
+	var dumbComponentPath = makePath(_path2.default.join(componentsPath, componentName + ".jsx"));
+	var containerPath = makePath(_path2.default.join(componentsPath, componentName + "Container.jsx"));
+	var styleSheetPath = makePath(_path2.default.join(componentsPath, componentName + ".css"));
+	var indexPath = makePath(_path2.default.join(path, "index.js"));
 
-var createComponent = function createComponent(path) {
-	var folderName = getFolderName(path);
-	var componentName = makeComponentName(folderName);
+	_fs2.default.writeFile(indexPath, indexString, "utf8", function (err) {
+		if (err) throw err;
 
-	_fs2.default.mkdirSync(path);
-	var dumbString = parseDumbComponent(componentName);
-	var containerString = parseContainer(componentName);
+		console.log("Index created !");
+	});
 
-	createFiles(dumbString, containerString);
-};
+	_fs2.default.writeFile(dumbComponentPath, dumbString, "utf8", function (err) {
+		if (err) throw err;
 
-var makePath = function makePath(path) {
-	var realPath = _path2.default.join(".", path);
+		console.log("Dumb component created !");
+	});
 
-	if (isWindows) {
-		return _path2.default.win32.normalize(realPath);
-	} else {
-		return realPath;
-	}
+	_fs2.default.writeFile(containerPath, containerString, "utf8", function (err) {
+		if (err) throw err;
+
+		console.log("Container component created !");
+	});
+
+	_fs2.default.writeFile(styleSheetPath, "", "utf8", function (err) {
+		if (err) throw err;
+
+		console.log("StyleSheet created !");
+	});
 };
 
 var parseDumbComponent = function parseDumbComponent(componentName) {
@@ -84,6 +91,40 @@ var parseContainer = function parseContainer(componentName) {
 	var data = _fs2.default.readFileSync(filePath).toString();
 
 	return data.replace(/MyComponent/g, componentName);
+};
+
+var parseIndex = function parseIndex(componentName) {
+	var filePath = makePath("./patterns/my-component/index.js");
+	var data = _fs2.default.readFileSync(filePath).toString();
+
+	return data.replace(/MyComponent/g, componentName);
+};
+
+var createComponent = function createComponent(path) {
+	var folderName = getFolderName(path);
+	var componentName = makeComponentName(folderName);
+
+	var componentsPath = makePath(_path2.default.join(path, "components"));
+
+	// mkdirSync recursive not working
+	_fs2.default.mkdirSync(path);
+	_fs2.default.mkdirSync(componentsPath);
+
+	var dumbString = parseDumbComponent(componentName);
+	var containerString = parseContainer(componentName);
+	var indexString = parseIndex(componentName);
+
+	createFiles(path, componentName, dumbString, containerString, indexString);
+};
+
+var makePath = function makePath(path) {
+	var realPath = _path2.default.join(".", path);
+
+	if ((0, _isWindows2.default)()) {
+		return _path2.default.win32.normalize(realPath);
+	} else {
+		return realPath;
+	}
 };
 
 var reactCli = function reactCli(args) {

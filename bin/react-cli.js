@@ -1,10 +1,8 @@
 #! /usr/bin/env node
 
-import fs from 'fs'
+import fs from "fs"
 import pathModule from "path"
-
-// @TODO: Change this
-const isWindows = true
+import isWindows from "is-windows"
 
 const validateName = (path) => {
 	// Validate name
@@ -17,7 +15,7 @@ const validatePath = (path) => {
 }
 
 const getFolderName = (path) => {
-	if (isWindows) {
+	if (isWindows()) {
 		const splitString = path.split("\\")
 
 		return splitString[splitString.length - 1]
@@ -35,30 +33,36 @@ const makeComponentName = (folderName) => {
 		.join("")
 }
 
-const createFiles = (dumbString, containerString) => {
-	// This should create files
-	console.log("creating files...")
-}
+const createFiles = (path, componentName, dumbString, containerString, indexString) => {
+	const componentsPath = makePath(pathModule.join(path, "components"))
+	const dumbComponentPath = makePath(pathModule.join(componentsPath, `${componentName}.jsx`))
+	const containerPath = makePath(pathModule.join(componentsPath, `${componentName}Container.jsx`))
+	const styleSheetPath = makePath(pathModule.join(componentsPath, `${componentName}.css`))
+	const indexPath = makePath(pathModule.join(path, `index.js`))
 
-const createComponent = (path) => {
-	const folderName = getFolderName(path)
-	const componentName = makeComponentName(folderName)
+	fs.writeFile(indexPath, indexString, "utf8", (err) => {
+		if (err) throw err
 
-	fs.mkdirSync(path)
-	const dumbString = parseDumbComponent(componentName)
-	const containerString = parseContainer(componentName)
+		console.log("Index created !")
+	});
 
-	createFiles(dumbString, containerString)
-}
+	fs.writeFile(dumbComponentPath, dumbString, "utf8", (err) => {
+		if (err) throw err
 
-const makePath = (path) => {
-	const realPath = pathModule.join(".", path);
+		console.log("Dumb component created !")
+	});
 
-	if (isWindows) {
-		return pathModule.win32.normalize(realPath);
-	} else {
-		return realPath
-	}
+	fs.writeFile(containerPath, containerString, "utf8", (err) => {
+		if (err) throw err
+
+		console.log("Container component created !")
+	});
+
+	fs.writeFile(styleSheetPath, "", "utf8", (err) => {
+		if (err) throw err
+
+		console.log("StyleSheet created !")
+	});
 }
 
 const parseDumbComponent = (componentName) => {
@@ -73,7 +77,41 @@ const parseContainer = (componentName) => {
 	const data = fs.readFileSync(filePath).toString()
 
 	return data.replace(/MyComponent/g, componentName);
-} 
+}
+
+const parseIndex = (componentName) => {
+	const filePath = makePath("./patterns/my-component/index.js")
+	const data = fs.readFileSync(filePath).toString()
+
+	return data.replace(/MyComponent/g, componentName);
+}
+
+const createComponent = (path) => {
+	const folderName = getFolderName(path)
+	const componentName = makeComponentName(folderName)
+
+	const componentsPath = makePath(pathModule.join(path, "components"))
+	
+	// mkdirSync recursive not working
+	fs.mkdirSync(path)
+	fs.mkdirSync(componentsPath)
+
+	const dumbString = parseDumbComponent(componentName)
+	const containerString = parseContainer(componentName)
+	const indexString = parseIndex(componentName)
+
+	createFiles(path, componentName, dumbString, containerString, indexString)
+}
+
+const makePath = (path) => {
+	const realPath = pathModule.join(".", path)
+
+	if (isWindows()) {
+		return pathModule.win32.normalize(realPath)
+	} else {
+		return realPath
+	}
+}
 
 const reactCli = (args) => {
 	const firstParam = args.shift()
