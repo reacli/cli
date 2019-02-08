@@ -35,6 +35,11 @@ const makeComponentName = (folderName) => {
 		.join("")
 }
 
+const createFiles = (dumbString, containerString) => {
+	// This should create files
+	console.log("creating files...")
+}
+
 const createComponent = (path) => {
 	const folderName = getFolderName(path)
 	const componentName = makeComponentName(folderName)
@@ -43,7 +48,7 @@ const createComponent = (path) => {
 	const dumbString = parseDumbComponent(componentName)
 	const containerString = parseContainer(componentName)
 
-	console.log(containerString)
+	createFiles(dumbString, containerString)
 }
 
 const makePath = (path) => {

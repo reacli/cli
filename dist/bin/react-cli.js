@@ -46,6 +46,11 @@ var makeComponentName = function makeComponentName(folderName) {
 	}).join("");
 };
 
+var createFiles = function createFiles(dumbString, containerString) {
+	// This should create files
+	console.log("creating files...");
+};
+
 var createComponent = function createComponent(path) {
 	var folderName = getFolderName(path);
 	var componentName = makeComponentName(folderName);
@@ -54,7 +59,7 @@ var createComponent = function createComponent(path) {
 	var dumbString = parseDumbComponent(componentName);
 	var containerString = parseContainer(componentName);
 
-	console.log(containerString);
+	createFiles(dumbString, containerString);
 };
 
 var makePath = function makePath(path) {
