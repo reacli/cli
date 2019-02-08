@@ -9,7 +9,14 @@ var _fs = require("fs");
 
 var _fs2 = _interopRequireDefault(_fs);
 
+var _path = require("path");
+
+var _path2 = _interopRequireDefault(_path);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+// @TODO: Change this
+var isWindows = true;
 
 var validateName = function validateName(path) {
 	// Validate name
@@ -22,31 +29,56 @@ var validatePath = function validatePath(path) {
 };
 
 var getFolderName = function getFolderName(path) {
-	var splitString = path.split("/");
+	if (isWindows) {
+		var splitString = path.split("\\");
 
-	return splitString[splitString.length - 1];
+		return splitString[splitString.length - 1];
+	} else {
+		var _splitString = path.split("/");
+
+		return _splitString[_splitString.length - 1];
+	}
 };
 
 var makeComponentName = function makeComponentName(folderName) {
-	// const name = folderName.replace(/(\-\w)/g, (word) => word[1].toUpperCase());
-	var name = folderName.split("-").map(function (word) {
+	return folderName.split("-").map(function (word) {
 		return word[0].toUpperCase() + word.substr(1);
 	}).join("");
-
-	return name;
 };
 
 var createComponent = function createComponent(path) {
 	var folderName = getFolderName(path);
 	var componentName = makeComponentName(folderName);
 
-	console.log("folder name: ", folderName);
-	console.log("component name: ", componentName);
+	_fs2.default.mkdirSync(path);
+	var dumbString = parseDumbComponent(componentName);
+	var containerString = parseContainer(componentName);
+
+	console.log(containerString);
 };
 
 var makePath = function makePath(path) {
-	// Make path here
-	return path;
+	var realPath = _path2.default.join(".", path);
+
+	if (isWindows) {
+		return _path2.default.win32.normalize(realPath);
+	} else {
+		return realPath;
+	}
+};
+
+var parseDumbComponent = function parseDumbComponent(componentName) {
+	var filePath = makePath("./patterns/my-component/components/MyComponent.jsx");
+	var data = _fs2.default.readFileSync(filePath).toString();
+
+	return data.replace(/MyComponent/g, componentName);
+};
+
+var parseContainer = function parseContainer(componentName) {
+	var filePath = makePath("./patterns/my-component/components/MyComponentContainer.jsx");
+	var data = _fs2.default.readFileSync(filePath).toString();
+
+	return data.replace(/MyComponent/g, componentName);
 };
 
 var reactCli = function reactCli(args) {

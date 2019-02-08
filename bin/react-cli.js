@@ -1,6 +1,10 @@
 #! /usr/bin/env node
 
 import fs from 'fs'
+import pathModule from "path"
+
+// @TODO: Change this
+const isWindows = true
 
 const validateName = (path) => {
 	// Validate name
@@ -13,9 +17,15 @@ const validatePath = (path) => {
 }
 
 const getFolderName = (path) => {
-	const splitString = path.split("/")
+	if (isWindows) {
+		const splitString = path.split("\\")
 
-	return splitString[splitString.length - 1]
+		return splitString[splitString.length - 1]
+	} else {
+		const splitString = path.split("/")
+
+		return splitString[splitString.length - 1]
+	}
 }
 
 const makeComponentName = (folderName) => {
@@ -28,15 +38,37 @@ const makeComponentName = (folderName) => {
 const createComponent = (path) => {
 	const folderName = getFolderName(path)
 	const componentName = makeComponentName(folderName)
-	
-	console.log("folder name: ", folderName);
-	console.log("component name: ", componentName);
+
+	fs.mkdirSync(path)
+	const dumbString = parseDumbComponent(componentName)
+	const containerString = parseContainer(componentName)
+
+	console.log(containerString)
 }
 
 const makePath = (path) => {
-	// Make path here
-	return path
+	const realPath = pathModule.join(".", path);
+
+	if (isWindows) {
+		return pathModule.win32.normalize(realPath);
+	} else {
+		return realPath
+	}
 }
+
+const parseDumbComponent = (componentName) => {
+	const filePath = makePath("./patterns/my-component/components/MyComponent.jsx")
+	const data = fs.readFileSync(filePath).toString()
+
+	return data.replace(/MyComponent/g, componentName);
+}
+
+const parseContainer = (componentName) => {
+	const filePath = makePath("./patterns/my-component/components/MyComponentContainer.jsx")
+	const data = fs.readFileSync(filePath).toString()
+
+	return data.replace(/MyComponent/g, componentName);
+} 
 
 const reactCli = (args) => {
 	const firstParam = args.shift()
