@@ -1,14 +1,22 @@
+[[flow-declaration]]
+
 import React, { Component } from "react";
 
 import MyComponent from "./MyComponent";
 
-class MyComponentContainer extends Component {
+[[flow-props-type]]
+
+[[flow-state-type]]
+
+class MyComponentContainer extends Component[[flow-component-typing]] {
+  [[flow-default-props-static]]
+
   constructor(props) {
     super(props);
 
     this.state = {
       value1: "test",
-    }
+    };
   }
 
   render() {
