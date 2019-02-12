@@ -3,6 +3,7 @@
 import fs from "fs"
 import pathModule from "path"
 import isWindows from "is-windows"
+import program from "commander"
 
 // Validate name
 const validateName = (path) => {
@@ -175,18 +176,25 @@ const createComponent = (path, options) => {
 	createFiles(path, componentName, dumbString, containerString, indexString, options)
 }
 
-const reactCli = (args) => {
-	const firstParam = args.shift()
-	const secondParam = args.shift()
+const reactCli = () => {
+
+    // Define cli options
+    program
+        .version("1.2.0")
+        .option("-f, --flow", "Add flow to the template")
+        .option("--scss", "Use SCSS instead of classic css")
+        .parse(process.argv)
+
+    const { args } = program;
+	const firstParam = args.shift();
+	const secondParam = args.shift();
 
 	let options = {}
-	const useFlow = (/--flow|-f/u).test(args)
-	const useScss = (/--scss/u).test(args)
-
-	if (useFlow) {
+	if (program.flow) {
 		options = Object.assign(options, { flow: true })
 	}
-	if (useScss) {
+	if (program.scss) {
+        console.log("Use sccs");
 		options = Object.assign(options, { scss: true })
 	}
 
@@ -204,7 +212,6 @@ const reactCli = (args) => {
 	}
 }
 
-const args = process.argv.splice(2)
-reactCli(args)
+reactCli()
 
 export default reactCli

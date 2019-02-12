@@ -19,6 +19,10 @@ var _isWindows = require("is-windows");
 
 var _isWindows2 = _interopRequireDefault(_isWindows);
 
+var _commander = require("commander");
+
+var _commander2 = _interopRequireDefault(_commander);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 // Validate name
@@ -198,18 +202,24 @@ var createComponent = function createComponent(path, options) {
 	createFiles(path, componentName, dumbString, containerString, indexString, options);
 };
 
-var reactCli = function reactCli(args) {
+var reactCli = function reactCli() {
+
+	// Define cli options
+	_commander2.default.version("1.2.0").option("-f, --flow", "Add flow to the template").option("--scss", "Use SCSS instead of classic css").parse(process.argv);
+
+	var args = _commander2.default.args;
+
+	console.log("args", args);
 	var firstParam = args.shift();
 	var secondParam = args.shift();
 
 	var options = {};
-	var useFlow = /\x2D\x2Dflow|\x2Df/.test(args);
-	var useScss = /\x2D\x2Dscss/.test(args);
-
-	if (useFlow) {
+	if (_commander2.default.flow) {
+		console.log("Use flow");
 		options = Object.assign(options, { flow: true });
 	}
-	if (useScss) {
+	if (_commander2.default.scss) {
+		console.log("Use sccs");
 		options = Object.assign(options, { scss: true });
 	}
 
@@ -227,7 +237,6 @@ var reactCli = function reactCli(args) {
 	}
 };
 
-var args = process.argv.splice(2);
-reactCli(args);
+reactCli();
 
 exports.default = reactCli;
