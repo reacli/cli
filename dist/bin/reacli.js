@@ -145,13 +145,13 @@ var dismissFlowOption = function dismissFlowOption(dumbString, containerString) 
 	containerString = containerString.replace(/\[\[flow\x2Dstate\x2Dtype\]\]/g, "").trim();
 	containerString = containerString.replace(/\[\[flow\x2Dcomponent\x2Dtyping\]\]/g, "");
 	containerString = containerString.replace(/\[\[flow\x2Ddefault\x2Dprops\x2Dstatic\]\]/g, "").trim();
-	// Remove empty lines : containerString = containerString.replace(/^\s*[\r\n\n]/gm, "\n")
+	containerString = containerString.replace(/^[\t-\r \xA0\u1680\u2000-\u200A\u2028\u2029\u202F\u205F\u3000\uFEFF]*[\n\r]/gm, "\n");
 
 	dumbString = dumbString.replace(/\[\[flow\x2Ddeclaration\]\]/g, "").trim();
 	dumbString = dumbString.replace(/\[\[flow\x2Dprops\x2Dtype\]\]/g, "").trim();
 	dumbString = dumbString.replace(/\[\[flow\x2Ddumb\x2Dcomponent\x2Dprops\x2Dtyping\]\]/g, "");
 	dumbString = dumbString.replace(/\[\[flow\x2Ddefault\x2Dprops\x2Dout\]\]/g, "").trim();
-	// Remove empty lines : dumbString = dumbString.replace(/^\s*[\r\n\n]/gm, '\n')
+	dumbString = dumbString.replace(/^[\t-\r \xA0\u1680\u2000-\u200A\u2028\u2029\u202F\u205F\u3000\uFEFF]*[\n\r]/gm, "\n");
 
 	return [dumbString, containerString];
 };
@@ -177,6 +177,8 @@ var createComponent = function createComponent(path, options) {
 
 		dumbString = _applyFlowOption2[0];
 		containerString = _applyFlowOption2[1];
+
+		console.log("Flow option activated !");
 	} else {
 		var _dismissFlowOption = dismissFlowOption(dumbString, containerString);
 

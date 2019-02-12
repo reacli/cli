@@ -130,13 +130,13 @@ const dismissFlowOption = (dumbString, containerString) => {
 	containerString = containerString.replace(/\[\[flow-state-type\]\]/gu, "").trim()
 	containerString = containerString.replace(/\[\[flow-component-typing\]\]/gu, "")
 	containerString = containerString.replace(/\[\[flow-default-props-static\]\]/gu, "").trim()
-	// Remove empty lines : containerString = containerString.replace(/^\s*[\r\n\n]/gm, "\n")
+	containerString = containerString.replace(/^\s*[\r\n\n]/gmu, "\n")
 
 	dumbString = dumbString.replace(/\[\[flow-declaration\]\]/gu, "").trim()
 	dumbString = dumbString.replace(/\[\[flow-props-type\]\]/gu, "").trim()
 	dumbString = dumbString.replace(/\[\[flow-dumb-component-props-typing\]\]/gu, "")
 	dumbString = dumbString.replace(/\[\[flow-default-props-out\]\]/gu, "").trim()
-	// Remove empty lines : dumbString = dumbString.replace(/^\s*[\r\n\n]/gm, '\n')
+	dumbString = dumbString.replace(/^\s*[\r\n\n]/gmu, "\n")
 
 	return [
 		dumbString,
@@ -160,6 +160,7 @@ const createComponent = (path, options) => {
 
 	if (options.flow) {
 		[dumbString, containerString] = applyFlowOption(dumbString, containerString, componentName)
+		console.log("Flow option activated !")
 	} else {
 		[dumbString, containerString] = dismissFlowOption(dumbString, containerString)
 	}
