@@ -45,11 +45,11 @@ const makePath = (path) => {
 	return realPath
 }
 
-const createFiles = (path, componentName, dumbString, containerString, indexString) => {
+const createFiles = (path, componentName, dumbString, containerString, indexString, options) => {
 	const componentsPath = makePath(pathModule.join(path, "components"))
 	const dumbComponentPath = makePath(pathModule.join(componentsPath, `${componentName}.jsx`))
 	const containerPath = makePath(pathModule.join(componentsPath, `${componentName}Container.jsx`))
-	const styleSheetPath = makePath(pathModule.join(componentsPath, `${componentName}.css`))
+	const styleSheetPath = makePath(pathModule.join(componentsPath, options.scss ? `${componentName}.scss` : `${componentName}.css`))
 	const indexPath = makePath(pathModule.join(path, "index.js"))
 
 	fs.writeFile(indexPath, indexString, "utf8", (err) => {
@@ -178,7 +178,11 @@ const createComponent = (path, options) => {
 		[dumbString, containerString] = dismissFlowOption(dumbString, containerString)
 	}
 
-	createFiles(path, componentName, dumbString, containerString, indexString)
+	if (options.scss) {
+		dumbString = dumbString.replace(new RegExp(`./${componentName}.css`, "u"), `./${componentName}.scss`)
+	}
+
+	createFiles(path, componentName, dumbString, containerString, indexString, options)
 }
 
 const reactCli = (args) => {
@@ -187,9 +191,13 @@ const reactCli = (args) => {
 
 	let options = {}
 	const useFlow = (/--flow|-f/u).test(args)
+	const useScss = (/--scss/u).test(args)
 
 	if (useFlow) {
 		options = Object.assign(options, { flow: true })
+	}
+	if (useScss) {
+		options = Object.assign(options, { scss: true })
 	}
 
    // Cmd reacli component <path> creates a component architecture
