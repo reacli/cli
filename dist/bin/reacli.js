@@ -63,11 +63,11 @@ var makePath = function makePath(path) {
 	return realPath;
 };
 
-var createFiles = function createFiles(path, componentName, dumbString, containerString, indexString) {
+var createFiles = function createFiles(path, componentName, dumbString, containerString, indexString, options) {
 	var componentsPath = makePath(_path2.default.join(path, "components"));
 	var dumbComponentPath = makePath(_path2.default.join(componentsPath, componentName + ".jsx"));
 	var containerPath = makePath(_path2.default.join(componentsPath, componentName + "Container.jsx"));
-	var styleSheetPath = makePath(_path2.default.join(componentsPath, componentName + ".css"));
+	var styleSheetPath = makePath(_path2.default.join(componentsPath, options.scss ? componentName + ".scss" : componentName + ".css"));
 	var indexPath = makePath(_path2.default.join(path, "index.js"));
 
 	_fs2.default.writeFile(indexPath, indexString, "utf8", function (err) {
@@ -157,7 +157,6 @@ var dismissFlowOption = function dismissFlowOption(dumbString, containerString) 
 	for (var key in flowContainerTags) {
 		containerString = containerString.replace(new RegExp("\\[\\[" + key + "\\]\\]", "u"), "").trim();
 	}
-	containerString = containerString.replace(/^[\t-\r \xA0\u1680\u2000-\u200A\u2028\u2029\u202F\u205F\u3000\uFEFF]*[\n\r]/gm, "\n");
 
 	for (var _key2 in flowDumbTags) {
 		dumbString = dumbString.replace(new RegExp("\\[\\[" + _key2 + "\\]\\]", "u"), "").trim();
@@ -202,7 +201,11 @@ var createComponent = function createComponent(path, options) {
 		containerString = _dismissFlowOption2[1];
 	}
 
-	createFiles(path, componentName, dumbString, containerString, indexString);
+	if (options.scss) {
+		dumbString = dumbString.replace(new RegExp("./" + componentName + ".css", "u"), "./" + componentName + ".scss");
+	}
+
+	createFiles(path, componentName, dumbString, containerString, indexString, options);
 };
 
 var reactCli = function reactCli(args) {
@@ -211,9 +214,13 @@ var reactCli = function reactCli(args) {
 
 	var options = {};
 	var useFlow = /\x2D\x2Dflow|\x2Df/.test(args);
+	var useScss = /\x2D\x2Dscss/.test(args);
 
 	if (useFlow) {
 		options = Object.assign(options, { flow: true });
+	}
+	if (useScss) {
+		options = Object.assign(options, { scss: true });
 	}
 
 	// Cmd reacli component <path> creates a component architecture
