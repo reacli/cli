@@ -14,7 +14,7 @@
         "array-bracket-spacing": "error",
         "array-callback-return": "error",
         "no-console": "off",
-        "array-element-newline": "error",
+        "array-element-newline": ["error", "consistent"],
         "arrow-body-style": "error",
         "arrow-parens": "error",
         "arrow-spacing": [
@@ -39,7 +39,7 @@
         "class-methods-use-this": "error",
         "comma-dangle": [
             "error",
-            "always"
+            "always-multiline"
         ],
         "comma-spacing": [
             "error",
@@ -74,7 +74,6 @@
         "function-paren-newline": "error",
         "generator-star-spacing": "error",
         "global-require": "error",
-        "guard-for-in": "error",
         "handle-callback-err": "error",
         "id-blacklist": "error",
         "id-length": "error",

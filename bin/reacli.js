@@ -86,14 +86,14 @@ const createFiles = (path, componentName, dumbString, containerString, indexStri
 }
 
 const parseDumbComponent = (componentName) => {
-	const filePath = makePath("./patterns/my-component/components/MyComponent.jsx")
+	const filePath = makePath("./patterns/my-component/components/MyComponent.template")
 	const data = fs.readFileSync(filePath).toString()
 
 	return data.replace(/MyComponent/gu, componentName)
 }
 
 const parseContainer = (componentName) => {
-	const filePath = makePath("./patterns/my-component/components/MyComponentContainer.jsx")
+	const filePath = makePath("./patterns/my-component/components/MyComponentContainer.template")
 	const data = fs.readFileSync(filePath).toString()
 
 	return data.replace(/MyComponent/gu, componentName)
@@ -106,7 +106,58 @@ const parseIndex = (componentName) => {
 	return data.replace(/MyComponent/gu, componentName)
 }
 
-const createComponent = (path) => {
+const flowContainerTags = {
+	"flow-component-typing": "<Props, State>",
+	"flow-declaration": "// @flow",
+	"flow-default-props-static": "static defaultProps = {\n\n\t};",
+	"flow-props-type": "type Props = {\n\n};",
+	"flow-state-type": "type State = {\n\tvalue1: string,\n};",
+}
+
+const flowDumbTags = {
+	"flow-declaration": "// @flow",
+	"flow-default-props-out": "type State = {\n\tvalue1: string,\n};",
+	"flow-dumb-component-props-typing": ": Props",
+	"flow-props-type": "type Props = {\n\tvalue1?: string,\n};",
+}
+
+const applyFlowOption = (dumbString, containerString, componentName) => {
+	for (let key in flowContainerTags) {
+		containerString = containerString.replace(new RegExp(`\\[\\[${key}\\]\\]`, "u"), flowContainerTags[key])
+	}
+
+	for (let key in flowDumbTags) {
+		dumbString = dumbString.replace(new RegExp(`\\[\\[${key}\\]\\]`, "u"), flowDumbTags[key])
+	}
+
+	dumbString = dumbString.replace(/\[\[flow-default-props-out\]\]/gu, `${componentName}.defaultProps = {\n\tvalue1: '',\n};`);
+
+	return [
+		dumbString,
+		containerString,
+	]
+}
+
+const dismissFlowOption = (dumbString, containerString) => {
+	for (let key in flowContainerTags) {
+		containerString = containerString.replace(new RegExp(`\\[\\[${key}\\]\\]`, "u"), "").trim()
+	}
+
+	for (let key in flowDumbTags) {
+		dumbString = dumbString.replace(new RegExp(`\\[\\[${key}\\]\\]`, "u"), "").trim()
+	}
+
+	// Remove empty lines
+	containerString = containerString.replace(/^\s*[\r\n\n]/gmu, "\n")
+	dumbString = dumbString.replace(/^\s*[\r\n\n]/gmu, "\n")
+
+	return [
+		dumbString,
+		containerString,
+	]
+}
+
+const createComponent = (path, options) => {
 	const folderName = getFolderName(path)
 	const componentName = makeComponentName(folderName)
 
@@ -116,24 +167,38 @@ const createComponent = (path) => {
 	fs.mkdirSync(path)
 	fs.mkdirSync(componentsPath)
 
-	const dumbString = parseDumbComponent(componentName)
-	const containerString = parseContainer(componentName)
+	let dumbString = parseDumbComponent(componentName)
+	let containerString = parseContainer(componentName)
 	const indexString = parseIndex(componentName)
+
+	if (options.flow) {
+		[dumbString, containerString] = applyFlowOption(dumbString, containerString, componentName)
+		console.log("Flow option activated !")
+	} else {
+		[dumbString, containerString] = dismissFlowOption(dumbString, containerString)
+	}
 
 	createFiles(path, componentName, dumbString, containerString, indexString)
 }
 
 const reactCli = (args) => {
 	const firstParam = args.shift()
-  const secondParam = args.shift()
+	const secondParam = args.shift()
 
-  // Cmd reacli component <path> creates a component architecture
+	let options = {}
+	const useFlow = (/--flow|-f/u).test(args)
+
+	if (useFlow) {
+		options = Object.assign(options, { flow: true })
+	}
+
+   // Cmd reacli component <path> creates a component architecture
 	if (firstParam === "component") {
 		const path = makePath(secondParam)
 
 		if (validatePath(path) && validateName(path)) {
 			try {
-				createComponent(path)
+				createComponent(path, options)
 			} catch (error) {
 				console.log("ERROR: ", error)
 			}
