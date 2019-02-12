@@ -35,22 +35,12 @@ const makeComponentName = (folderName) => folderName
 	.map((word) => word[0].toUpperCase() + word.substr(1))
 	.join("")
 
-const makePath = (path) => {
-	const realPath = pathModule.join(".", path)
-
-	if (isWindows()) {
-		return pathModule.win32.normalize(realPath)
-	}
-
-	return realPath
-}
-
 const createFiles = (path, componentName, dumbString, containerString, indexString, options) => {
-	const componentsPath = makePath(pathModule.join(path, "components"))
-	const dumbComponentPath = makePath(pathModule.join(componentsPath, `${componentName}.jsx`))
-	const containerPath = makePath(pathModule.join(componentsPath, `${componentName}Container.jsx`))
-	const styleSheetPath = makePath(pathModule.join(componentsPath, options.scss ? `${componentName}.scss` : `${componentName}.css`))
-	const indexPath = makePath(pathModule.join(path, "index.js"))
+	const componentsPath = pathModule.resolve(path, "components")
+	const dumbComponentPath = pathModule.resolve(componentsPath, `${componentName}.jsx`)
+	const containerPath = pathModule.resolve(componentsPath, `${componentName}Container.jsx`)
+	const styleSheetPath = pathModule.resolve(componentsPath, options.scss ? `${componentName}.scss` : `${componentName}.css`)
+	const indexPath = pathModule.resolve(path, "index.js")
 
 	fs.writeFile(indexPath, indexString, "utf8", (err) => {
 		if (err) {
@@ -86,21 +76,21 @@ const createFiles = (path, componentName, dumbString, containerString, indexStri
 }
 
 const parseDumbComponent = (componentName) => {
-	const filePath = makePath("./patterns/my-component/components/MyComponent.template")
+	const filePath = pathModule.resolve("/", __dirname, "../patterns/my-component/components/MyComponent.template")
 	const data = fs.readFileSync(filePath).toString()
 
 	return data.replace(/MyComponent/gu, componentName)
 }
 
 const parseContainer = (componentName) => {
-	const filePath = makePath("./patterns/my-component/components/MyComponentContainer.template")
+	const filePath = pathModule.resolve("/", __dirname, "../patterns/my-component/components/MyComponentContainer.template")
 	const data = fs.readFileSync(filePath).toString()
 
 	return data.replace(/MyComponent/gu, componentName)
 }
 
 const parseIndex = (componentName) => {
-	const filePath = makePath("./patterns/my-component/index.js")
+	const filePath = pathModule.resolve("/", __dirname, "../patterns/my-component/index.template")
 	const data = fs.readFileSync(filePath).toString()
 
 	return data.replace(/MyComponent/gu, componentName)
@@ -161,7 +151,7 @@ const createComponent = (path, options) => {
 	const folderName = getFolderName(path)
 	const componentName = makeComponentName(folderName)
 
-	const componentsPath = makePath(pathModule.join(path, "components"))
+	const componentsPath = pathModule.resolve(path, "components")
 
 	// MkdirSync recursive not working
 	fs.mkdirSync(path)
@@ -202,7 +192,7 @@ const reactCli = (args) => {
 
    // Cmd reacli component <path> creates a component architecture
 	if (firstParam === "component") {
-		const path = makePath(secondParam)
+		const path = pathModule.resolve(secondParam)
 
 		if (validatePath(path) && validateName(path)) {
 			try {

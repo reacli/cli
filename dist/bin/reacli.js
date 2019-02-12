@@ -53,22 +53,12 @@ var makeComponentName = function makeComponentName(folderName) {
 	}).join("");
 };
 
-var makePath = function makePath(path) {
-	var realPath = _path2.default.join(".", path);
-
-	if ((0, _isWindows2.default)()) {
-		return _path2.default.win32.normalize(realPath);
-	}
-
-	return realPath;
-};
-
 var createFiles = function createFiles(path, componentName, dumbString, containerString, indexString, options) {
-	var componentsPath = makePath(_path2.default.join(path, "components"));
-	var dumbComponentPath = makePath(_path2.default.join(componentsPath, componentName + ".jsx"));
-	var containerPath = makePath(_path2.default.join(componentsPath, componentName + "Container.jsx"));
-	var styleSheetPath = makePath(_path2.default.join(componentsPath, options.scss ? componentName + ".scss" : componentName + ".css"));
-	var indexPath = makePath(_path2.default.join(path, "index.js"));
+	var componentsPath = _path2.default.resolve(path, "components");
+	var dumbComponentPath = _path2.default.resolve(componentsPath, componentName + ".jsx");
+	var containerPath = _path2.default.resolve(componentsPath, componentName + "Container.jsx");
+	var styleSheetPath = _path2.default.resolve(componentsPath, options.scss ? componentName + ".scss" : componentName + ".css");
+	var indexPath = _path2.default.resolve(path, "index.js");
 
 	_fs2.default.writeFile(indexPath, indexString, "utf8", function (err) {
 		if (err) {
@@ -104,21 +94,21 @@ var createFiles = function createFiles(path, componentName, dumbString, containe
 };
 
 var parseDumbComponent = function parseDumbComponent(componentName) {
-	var filePath = makePath("./patterns/my-component/components/MyComponent.template");
+	var filePath = _path2.default.resolve("/", __dirname, "../patterns/my-component/components/MyComponent.template");
 	var data = _fs2.default.readFileSync(filePath).toString();
 
 	return data.replace(/MyComponent/g, componentName);
 };
 
 var parseContainer = function parseContainer(componentName) {
-	var filePath = makePath("./patterns/my-component/components/MyComponentContainer.template");
+	var filePath = _path2.default.resolve("/", __dirname, "../patterns/my-component/components/MyComponentContainer.template");
 	var data = _fs2.default.readFileSync(filePath).toString();
 
 	return data.replace(/MyComponent/g, componentName);
 };
 
 var parseIndex = function parseIndex(componentName) {
-	var filePath = makePath("./patterns/my-component/index.js");
+	var filePath = _path2.default.resolve("/", __dirname, "../patterns/my-component/index.template");
 	var data = _fs2.default.readFileSync(filePath).toString();
 
 	return data.replace(/MyComponent/g, componentName);
@@ -173,7 +163,7 @@ var createComponent = function createComponent(path, options) {
 	var folderName = getFolderName(path);
 	var componentName = makeComponentName(folderName);
 
-	var componentsPath = makePath(_path2.default.join(path, "components"));
+	var componentsPath = _path2.default.resolve(path, "components");
 
 	// MkdirSync recursive not working
 	_fs2.default.mkdirSync(path);
@@ -225,7 +215,7 @@ var reactCli = function reactCli(args) {
 
 	// Cmd reacli component <path> creates a component architecture
 	if (firstParam === "component") {
-		var path = makePath(secondParam);
+		var path = _path2.default.resolve(secondParam);
 
 		if (validatePath(path) && validateName(path)) {
 			try {
