@@ -106,16 +106,30 @@ const parseIndex = (componentName) => {
 	return data.replace(/MyComponent/gu, componentName)
 }
 
-const applyFlowOption = (dumbString, containerString, componentName) => {
-	containerString = containerString.replace(/\[\[flow-declaration\]\]/gu, "// @flow")
-	containerString = containerString.replace(/\[\[flow-props-type\]\]/gu, "type Props = {\n\n};");
-	containerString = containerString.replace(/\[\[flow-state-type\]\]/gu, "type State = {\n\tvalue1: string,\n};");
-	containerString = containerString.replace(/\[\[flow-component-typing\]\]/gu, "<Props, State>");
-	containerString = containerString.replace(/\[\[flow-default-props-static\]\]/gu, "static defaultProps = {\n\n\t};");
+const flowContainerTags = {
+	"flow-component-typing": "<Props, State>",
+	"flow-declaration": "// @flow",
+	"flow-default-props-static": "static defaultProps = {\n\n\t};",
+	"flow-props-type": "type Props = {\n\n};",
+	"flow-state-type": "type State = {\n\tvalue1: string,\n};",
+}
 
-	dumbString = dumbString.replace(/\[\[flow-declaration\]\]/gu, "// @flow")
-	dumbString = dumbString.replace(/\[\[flow-props-type\]\]/gu, "type Props = {\n\tvalue1?: string,\n};");
-	dumbString = dumbString.replace(/\[\[flow-dumb-component-props-typing\]\]/gu, ": Props")
+const flowDumbTags = {
+	"flow-declaration": "// @flow",
+	"flow-default-props-out": "type State = {\n\tvalue1: string,\n};",
+	"flow-dumb-component-props-typing": ": Props",
+	"flow-props-type": "type Props = {\n\tvalue1?: string,\n};",
+}
+
+const applyFlowOption = (dumbString, containerString, componentName) => {
+	for (let key in flowContainerTags) {
+		containerString = containerString.replace(new RegExp(`\\[\\[${key}\\]\\]`, "u"), flowContainerTags[key])
+	}
+
+	for (let key in flowDumbTags) {
+		dumbString = dumbString.replace(new RegExp(`\\[\\[${key}\\]\\]`, "u"), flowDumbTags[key])
+	}
+
 	dumbString = dumbString.replace(/\[\[flow-default-props-out\]\]/gu, `${componentName}.defaultProps = {\n\tvalue1: '',\n};`);
 
 	return [
@@ -125,17 +139,16 @@ const applyFlowOption = (dumbString, containerString, componentName) => {
 }
 
 const dismissFlowOption = (dumbString, containerString) => {
-	containerString = containerString.replace(/\[\[flow-declaration\]\]/gu, "").trim()
-	containerString = containerString.replace(/\[\[flow-props-type\]\]/gu, "").trim()
-	containerString = containerString.replace(/\[\[flow-state-type\]\]/gu, "").trim()
-	containerString = containerString.replace(/\[\[flow-component-typing\]\]/gu, "")
-	containerString = containerString.replace(/\[\[flow-default-props-static\]\]/gu, "").trim()
-	containerString = containerString.replace(/^\s*[\r\n\n]/gmu, "\n")
+	for (let key in flowContainerTags) {
+		containerString = containerString.replace(new RegExp(`\\[\\[${key}\\]\\]`, "u"), "").trim()
+	}
 
-	dumbString = dumbString.replace(/\[\[flow-declaration\]\]/gu, "").trim()
-	dumbString = dumbString.replace(/\[\[flow-props-type\]\]/gu, "").trim()
-	dumbString = dumbString.replace(/\[\[flow-dumb-component-props-typing\]\]/gu, "")
-	dumbString = dumbString.replace(/\[\[flow-default-props-out\]\]/gu, "").trim()
+	for (let key in flowDumbTags) {
+		dumbString = dumbString.replace(new RegExp(`\\[\\[${key}\\]\\]`, "u"), "").trim()
+	}
+
+	// Remove empty lines
+	containerString = containerString.replace(/^\s*[\r\n\n]/gmu, "\n")
 	dumbString = dumbString.replace(/^\s*[\r\n\n]/gmu, "\n")
 
 	return [

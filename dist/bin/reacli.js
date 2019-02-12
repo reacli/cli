@@ -124,33 +124,47 @@ var parseIndex = function parseIndex(componentName) {
 	return data.replace(/MyComponent/g, componentName);
 };
 
-var applyFlowOption = function applyFlowOption(dumbString, containerString, componentName) {
-	containerString = containerString.replace(/\[\[flow\x2Ddeclaration\]\]/g, "// @flow");
-	containerString = containerString.replace(/\[\[flow\x2Dprops\x2Dtype\]\]/g, "type Props = {\n\n};");
-	containerString = containerString.replace(/\[\[flow\x2Dstate\x2Dtype\]\]/g, "type State = {\n\tvalue1: string,\n};");
-	containerString = containerString.replace(/\[\[flow\x2Dcomponent\x2Dtyping\]\]/g, "<Props, State>");
-	containerString = containerString.replace(/\[\[flow\x2Ddefault\x2Dprops\x2Dstatic\]\]/g, "static defaultProps = {\n\n\t};");
+var flowContainerTags = {
+	"flow-component-typing": "<Props, State>",
+	"flow-declaration": "// @flow",
+	"flow-default-props-static": "static defaultProps = {\n\n\t};",
+	"flow-props-type": "type Props = {\n\n};",
+	"flow-state-type": "type State = {\n\tvalue1: string,\n};"
+};
 
-	dumbString = dumbString.replace(/\[\[flow\x2Ddeclaration\]\]/g, "// @flow");
-	dumbString = dumbString.replace(/\[\[flow\x2Dprops\x2Dtype\]\]/g, "type Props = {\n\tvalue1?: string,\n};");
-	dumbString = dumbString.replace(/\[\[flow\x2Ddumb\x2Dcomponent\x2Dprops\x2Dtyping\]\]/g, ": Props");
+var flowDumbTags = {
+	"flow-declaration": "// @flow",
+	"flow-default-props-out": "type State = {\n\tvalue1: string,\n};",
+	"flow-dumb-component-props-typing": ": Props",
+	"flow-props-type": "type Props = {\n\tvalue1?: string,\n};"
+};
+
+var applyFlowOption = function applyFlowOption(dumbString, containerString, componentName) {
+	for (var key in flowContainerTags) {
+		containerString = containerString.replace(new RegExp("\\[\\[" + key + "\\]\\]", "u"), flowContainerTags[key]);
+	}
+
+	for (var _key in flowDumbTags) {
+		dumbString = dumbString.replace(new RegExp("\\[\\[" + _key + "\\]\\]", "u"), flowDumbTags[_key]);
+	}
+
 	dumbString = dumbString.replace(/\[\[flow\x2Ddefault\x2Dprops\x2Dout\]\]/g, componentName + ".defaultProps = {\n\tvalue1: '',\n};");
 
 	return [dumbString, containerString];
 };
 
 var dismissFlowOption = function dismissFlowOption(dumbString, containerString) {
-	containerString = containerString.replace(/\[\[flow\x2Ddeclaration\]\]/g, "").trim();
-	containerString = containerString.replace(/\[\[flow\x2Dprops\x2Dtype\]\]/g, "").trim();
-	containerString = containerString.replace(/\[\[flow\x2Dstate\x2Dtype\]\]/g, "").trim();
-	containerString = containerString.replace(/\[\[flow\x2Dcomponent\x2Dtyping\]\]/g, "");
-	containerString = containerString.replace(/\[\[flow\x2Ddefault\x2Dprops\x2Dstatic\]\]/g, "").trim();
+	for (var key in flowContainerTags) {
+		containerString = containerString.replace(new RegExp("\\[\\[" + key + "\\]\\]", "u"), "").trim();
+	}
 	containerString = containerString.replace(/^[\t-\r \xA0\u1680\u2000-\u200A\u2028\u2029\u202F\u205F\u3000\uFEFF]*[\n\r]/gm, "\n");
 
-	dumbString = dumbString.replace(/\[\[flow\x2Ddeclaration\]\]/g, "").trim();
-	dumbString = dumbString.replace(/\[\[flow\x2Dprops\x2Dtype\]\]/g, "").trim();
-	dumbString = dumbString.replace(/\[\[flow\x2Ddumb\x2Dcomponent\x2Dprops\x2Dtyping\]\]/g, "");
-	dumbString = dumbString.replace(/\[\[flow\x2Ddefault\x2Dprops\x2Dout\]\]/g, "").trim();
+	for (var _key2 in flowDumbTags) {
+		dumbString = dumbString.replace(new RegExp("\\[\\[" + _key2 + "\\]\\]", "u"), "").trim();
+	}
+
+	// Remove empty lines
+	containerString = containerString.replace(/^[\t-\r \xA0\u1680\u2000-\u200A\u2028\u2029\u202F\u205F\u3000\uFEFF]*[\n\r]/gm, "\n");
 	dumbString = dumbString.replace(/^[\t-\r \xA0\u1680\u2000-\u200A\u2028\u2029\u202F\u205F\u3000\uFEFF]*[\n\r]/gm, "\n");
 
 	return [dumbString, containerString];
