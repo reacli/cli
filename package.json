@@ -40,6 +40,7 @@
   "dependencies": {
     "commander": "^2.19.0",
     "is-windows": "^1.0.2",
-    "jest": "^24.1.0"
+    "jest": "^24.1.0",
+    "pkginfo": "^0.4.1"
   }
 }
