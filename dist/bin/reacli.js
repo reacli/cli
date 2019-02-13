@@ -236,6 +236,7 @@ var reactCli = function reactCli() {
                 createComponent(path, options);
             } catch (error) {
                 console.log("ERROR: ", error);
+                _commander2.default.outputHelp();
             }
         }
     }

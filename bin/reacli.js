@@ -210,6 +210,7 @@ const reactCli = () => {
                 createComponent(path, options)
             } catch (error) {
                 console.log("ERROR: ", error)
+                program.outputHelp()
             }
         }
     }
