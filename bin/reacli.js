@@ -96,6 +96,7 @@ const parseIndex = (componentName) => {
 	return data.replace(/MyComponent/gu, componentName)
 }
 
+// FLOW
 const flowContainerTags = {
 	"flow-component-typing": "<Props, State>",
 	"flow-declaration": "// @flow",
@@ -147,6 +148,36 @@ const dismissFlowOption = (dumbString, containerString) => {
 	]
 }
 
+
+// REDUX
+const reduxContainerFlags = {
+	"redux-import-connect": "import { connect } from 'react-redux';",
+	"redux-map-dispatch-to-props": "const mapDispatchToProps = dispatch => ({\n\t// action: (input) => dispatch(action(input)),\n});",
+	"redux-map-state-to-props": "const mapStateToProps = () => ({}); // or (state) => ({});",
+}
+
+const applyReduxOption = (containerString, componentName) => {
+	for (let key in reduxContainerFlags) {
+		containerString = containerString.replace(new RegExp(`\\[\\[${key}\\]\\]`, "u"), reduxContainerFlags[key])
+	}
+	containerString = containerString.replace(new RegExp(`\\[\\[redux-connection\\]\\]${componentName}Container`, "u"), `connect(mapStateToProps, mapDispatchToProps)(${componentName}Container)`)
+
+	return containerString
+}
+
+const dismissReduxOption = (containerString) => {
+	for (let key in reduxContainerFlags) {
+		containerString = containerString.replace(new RegExp(`\\[\\[${key}\\]\\]`, "u"), "").trim()
+	}
+	containerString = containerString.replace(new RegExp("\\[\\[redux-connection\\]\\]", "u"), "")
+
+	// Remove empty lines
+	containerString = containerString.replace(/^\s*[\r\n\n]/gmu, "\n")
+
+	return containerString
+}
+
+
 const createComponent = (path, options) => {
 	const folderName = getFolderName(path)
 	const componentName = makeComponentName(folderName)
@@ -168,6 +199,13 @@ const createComponent = (path, options) => {
 		[dumbString, containerString] = dismissFlowOption(dumbString, containerString)
 	}
 
+	if (options.redux) {
+		containerString = applyReduxOption(containerString, componentName)
+		console.log("Redux option activated !")
+	} else {
+		containerString = dismissReduxOption(containerString)
+	}
+
 	if (options.scss) {
 		dumbString = dumbString.replace(new RegExp(`./${componentName}.css`, "u"), `./${componentName}.scss`)
 	}
@@ -182,12 +220,16 @@ const reactCli = (args) => {
 	let options = {}
 	const useFlow = (/--flow|-f/u).test(args)
 	const useScss = (/--scss/u).test(args)
+	const useRedux = (/--redux|-r/u).test(args)
 
 	if (useFlow) {
 		options = Object.assign(options, { flow: true })
 	}
 	if (useScss) {
 		options = Object.assign(options, { scss: true })
+	}
+	if (useRedux) {
+		options = Object.assign(options, { redux: true })
 	}
 
    // Cmd reacli component <path> creates a component architecture
