@@ -7,7 +7,7 @@
     "precommit": "npm run lint && npm run build && npm run test",
     "test": "echo 'no test yet'",
     "build": "rimraf dist/ && babel ./ --out-dir dist/ --ignore ./node_modules,./.babelrc,./package.json,./package-lock.json,./npm-debug.log,./README.md,./CONTRIBUTING.md,./commitlint.config.js --copy-files",
-    "postinstall": "npm run build",
+    "prepublishOnly": "npm run build",
     "commitmsg": "commitlint -e $GIT_PARAMS",
     "lint": "eslint ./bin/*.js"
   },
@@ -37,7 +37,7 @@
     "eslint": "^5.9.0",
     "husky": "^0.14.3",
     "jest": "^24.1.0",
-    "rimraf": "^2.6.2"
+    "rimraf": "^2.6.3"
   },
   "dependencies": {
     "is-windows": "^1.0.2"
