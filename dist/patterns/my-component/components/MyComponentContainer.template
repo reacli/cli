@@ -4,6 +4,8 @@ import React, { Component } from "react";
 
 import MyComponent from "./MyComponent";
 
+[[redux-import-connect]]
+
 [[flow-props-type]]
 
 [[flow-state-type]]
@@ -25,4 +27,8 @@ class MyComponentContainer extends Component[[flow-component-typing]] {
   }
 }
 
-export default MyComponentContainer;
+[[redux-map-state-to-props]]
+
+[[redux-map-dispatch-to-props]]
+
+export default [[redux-connection]]MyComponentContainer;

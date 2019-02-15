@@ -122,6 +122,7 @@ var parseIndex = function parseIndex(componentName) {
     return data.replace(/MyComponent/g, componentName);
 };
 
+// FLOW
 var flowContainerTags = {
     "flow-component-typing": "<Props, State>",
     "flow-declaration": "// @flow",
@@ -167,6 +168,34 @@ var dismissFlowOption = function dismissFlowOption(dumbString, containerString) 
     return [dumbString, containerString];
 };
 
+// REDUX
+var reduxContainerFlags = {
+	"redux-import-connect": "import { connect } from 'react-redux';",
+	"redux-map-dispatch-to-props": "const mapDispatchToProps = dispatch => ({\n\t// action: (input) => dispatch(action(input)),\n});",
+	"redux-map-state-to-props": "const mapStateToProps = () => ({}); // or (state) => ({});"
+};
+
+var applyReduxOption = function applyReduxOption(containerString, componentName) {
+	for (var key in reduxContainerFlags) {
+		containerString = containerString.replace(new RegExp("\\[\\[" + key + "\\]\\]", "u"), reduxContainerFlags[key]);
+	}
+	containerString = containerString.replace(new RegExp("\\[\\[redux-connection\\]\\]" + componentName + "Container", "u"), "connect(mapStateToProps, mapDispatchToProps)(" + componentName + "Container)");
+
+	return containerString;
+};
+
+var dismissReduxOption = function dismissReduxOption(containerString) {
+	for (var key in reduxContainerFlags) {
+		containerString = containerString.replace(new RegExp("\\[\\[" + key + "\\]\\]", "u"), "").trim();
+	}
+	containerString = containerString.replace(new RegExp("\\[\\[redux-connection\\]\\]", "u"), "");
+
+	// Remove empty lines
+	containerString = containerString.replace(/^[\t-\r \xA0\u1680\u2000-\u200A\u2028\u2029\u202F\u205F\u3000\uFEFF]*[\n\r]/gm, "\n");
+
+	return containerString;
+};
+
 var createComponent = function createComponent(path, options) {
     var folderName = getFolderName(path);
     var componentName = makeComponentName(folderName);
@@ -199,9 +228,16 @@ var createComponent = function createComponent(path, options) {
         containerString = _dismissFlowOption2[1];
     }
 
-    if (options.scss) {
-        dumbString = dumbString.replace(new RegExp("./" + componentName + ".css", "u"), "./" + componentName + ".scss");
-    }
+	if (options.redux) {
+		containerString = applyReduxOption(containerString, componentName);
+		console.log("Redux option activated !");
+	} else {
+		containerString = dismissReduxOption(containerString);
+	}
+
+	if (options.scss) {
+		dumbString = dumbString.replace(new RegExp("./" + componentName + ".css", "u"), "./" + componentName + ".scss");
+	}
 
     createFiles(path, componentName, dumbString, containerString, indexString, options);
 };
@@ -210,6 +246,7 @@ var reactCli = function reactCli() {
 
     (0, _pkginfo2.default)(module, "version");
     var cliVersion = module.exports.version;
+	var useRedux = /\x2D\x2Dredux|\x2Dr/.test(args);
 
     // Define cli options
     _commander2.default.version(cliVersion).option("-f, --flow", "Add flow to the template").option("--scss", "Use SCSS instead of classic css").parse(process.argv);
