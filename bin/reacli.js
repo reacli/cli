@@ -179,7 +179,6 @@ const dismissReduxOption = (containerString) => {
 	return containerString
 }
 
-
 const createComponent = (path, options) => {
 	const folderName = getFolderName(path)
 	const componentName = makeComponentName(folderName)
