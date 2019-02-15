@@ -224,6 +224,7 @@ const reactCli = () => {
 		.version(cliVersion)
 		.option("-f, --flow", "Add flow to the template")
 		.option("--scss", "Use SCSS instead of classic css")
+		.option("--redux", "Add Redux to the template")
 		.parse(process.argv)
 
 	const { args } = program;
@@ -231,14 +232,13 @@ const reactCli = () => {
 	const secondParam = args.shift();
 
 	let options = {}
-	const useRedux = (/--redux|-r/u).test(args)
 	if (program.flow) {
 		options = Object.assign(options, { flow: true })
 	}
 	if (program.scss) {
 		options = Object.assign(options, { scss: true })
 	}
-	if (useRedux) {
+	if (program.redux) {
 		options = Object.assign(options, { redux: true })
 	}
 
