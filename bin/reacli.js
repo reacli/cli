@@ -177,10 +177,6 @@ const dismissReduxOption = (containerString) => {
 	return containerString
 }
 
-<<<<<<< HEAD
-=======
-
->>>>>>> feat: add --redux argument to add Redux snippets in the container
 const createComponent = (path, options) => {
 	const folderName = getFolderName(path)
 	const componentName = makeComponentName(folderName)
