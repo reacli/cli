@@ -3,8 +3,13 @@
 import fs from "fs"
 import pathModule from "path"
 import isWindows from "is-windows"
+<<<<<<< HEAD
 import program from "commander"
 import pkgInfo from "pkginfo"
+=======
+import format from "string-template"
+import Mustache from "mustache"
+>>>>>>> feat: add mustache and string-template for flow to compare them
 
 // Validate name
 const validateName = (path) => {
@@ -98,32 +103,27 @@ const parseIndex = (componentName) => {
 	return data.replace(/MyComponent/gu, componentName)
 }
 
-// FLOW
-const flowContainerTags = {
-	"flow-component-typing": "<Props, State>",
-	"flow-declaration": "// @flow",
-	"flow-default-props-static": "static defaultProps = {\n\n\t};",
-	"flow-props-type": "type Props = {\n\n};",
-	"flow-state-type": "type State = {\n\tvalue1: string,\n};",
-}
-
-const flowDumbTags = {
-	"flow-declaration": "// @flow",
-	"flow-default-props-out": "type State = {\n\tvalue1: string,\n};",
-	"flow-dumb-component-props-typing": ": Props",
-	"flow-props-type": "type Props = {\n\tvalue1?: string,\n};",
-}
-
 const applyFlowOption = (dumbString, containerString, componentName) => {
-	for (let key in flowContainerTags) {
-		containerString = containerString.replace(new RegExp(`\\[\\[${key}\\]\\]`, "u"), flowContainerTags[key])
+	// MUSTACHE
+	const flowContainerTags = {
+		"flowComponentTyping": "<Props, State>",
+		"flowDeclaration": "// @flow",
+		"flowDefaultPropsStatic": "static defaultProps = {\n\n\t};",
+		"flowPropsType": "type Props = {\n\n};",
+		"flowStateType": "type State = {\n\tvalue1: string,\n};",
 	}
 
-	for (let key in flowDumbTags) {
-		dumbString = dumbString.replace(new RegExp(`\\[\\[${key}\\]\\]`, "u"), flowDumbTags[key])
+	containerString = Mustache.render(containerString, flowContainerTags)
+
+	// STRING-TEMPLATE
+	const flowDumbTags = {
+		"flowDeclaration": "// @flow",
+		"flowDefaultPropsOut": `${componentName}.defaultProps = {\n\tvalue1: '',\n};`,
+		"flowDumbComponentPropsTyping": ": Props",
+		"flowPropsType": "type Props = {\n\tvalue1?: string,\n};",
 	}
 
-	dumbString = dumbString.replace(/\[\[flow-default-props-out\]\]/gu, `${componentName}.defaultProps = {\n\tvalue1: '',\n};`);
+	dumbString = format(dumbString, flowDumbTags)
 
 	return [
 		dumbString,
@@ -132,13 +132,26 @@ const applyFlowOption = (dumbString, containerString, componentName) => {
 }
 
 const dismissFlowOption = (dumbString, containerString) => {
-	for (let key in flowContainerTags) {
-		containerString = containerString.replace(new RegExp(`\\[\\[${key}\\]\\]`, "u"), "").trim()
+	// MUSTACHE
+	const flowContainerTags = {
+		"flowComponentTyping": "",
+		"flowDeclaration": "",
+		"flowDefaultPropsStatic": "",
+		"flowPropsType": "",
+		"flowStateType": "",
 	}
 
-	for (let key in flowDumbTags) {
-		dumbString = dumbString.replace(new RegExp(`\\[\\[${key}\\]\\]`, "u"), "").trim()
+	containerString = Mustache.render(containerString, flowContainerTags)
+
+	// STRING-TEMPLATE
+	const flowDumbTags = {
+		"flowDeclaration": "",
+		"flowDefaultPropsOut": "",
+		"flowDumbComponentPropsTyping": "",
+		"flowPropsType": "",
 	}
+
+	dumbString = format(dumbString, flowDumbTags)
 
 	// Remove empty lines
 	containerString = containerString.replace(/^\s*[\r\n\n]/gmu, "\n")
