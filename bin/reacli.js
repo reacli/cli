@@ -3,16 +3,9 @@
 import fs from "fs"
 import pathModule from "path"
 import isWindows from "is-windows"
-<<<<<<< HEAD
-<<<<<<< HEAD
 import program from "commander"
 import pkgInfo from "pkginfo"
-=======
-import format from "string-template"
-=======
->>>>>>> feat: works when all options are requested
 import Mustache from "mustache"
->>>>>>> feat: add mustache and string-template for flow to compare them
 
 // Validate name
 const validateName = (path) => {

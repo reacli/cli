@@ -41,13 +41,8 @@
   },
   "dependencies": {
     "is-windows": "^1.0.2",
-<<<<<<< HEAD
     "commander": "^2.19.0",
     "pkginfo": "^0.4.1",
-    "mustache": "^3.0.1",
-    "string-template": "^1.0.0"
-=======
     "mustache": "^3.0.1"
->>>>>>> feat: works when all options are requested
   }
 }
