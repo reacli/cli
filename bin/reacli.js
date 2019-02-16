@@ -3,6 +3,8 @@
 import fs from "fs"
 import pathModule from "path"
 import isWindows from "is-windows"
+import program from "commander"
+import pkgInfo from "pkginfo"
 
 // Validate name
 const validateName = (path) => {
@@ -212,26 +214,35 @@ const createComponent = (path, options) => {
 	createFiles(path, componentName, dumbString, containerString, indexString, options)
 }
 
-const reactCli = (args) => {
-	const firstParam = args.shift()
-	const secondParam = args.shift()
+const reactCli = () => {
+
+	pkgInfo(module, "version");
+	const cliVersion = module.exports.version;
+
+	// Define cli options
+	program
+		.version(cliVersion)
+		.option("-f, --flow", "Add flow to the template")
+		.option("--scss", "Use SCSS instead of classic css")
+		.option("--redux", "Add Redux to the template")
+		.parse(process.argv)
+
+	const { args } = program;
+	const firstParam = args.shift();
+	const secondParam = args.shift();
 
 	let options = {}
-	const useFlow = (/--flow|-f/u).test(args)
-	const useScss = (/--scss/u).test(args)
-	const useRedux = (/--redux|-r/u).test(args)
-
-	if (useFlow) {
+	if (program.flow) {
 		options = Object.assign(options, { flow: true })
 	}
-	if (useScss) {
+	if (program.scss) {
 		options = Object.assign(options, { scss: true })
 	}
-	if (useRedux) {
+	if (program.redux) {
 		options = Object.assign(options, { redux: true })
 	}
 
-   // Cmd reacli component <path> creates a component architecture
+	// Cmd reacli component <path> creates a component architecture
 	if (firstParam === "component") {
 		const path = pathModule.resolve(secondParam)
 
@@ -240,12 +251,12 @@ const reactCli = (args) => {
 				createComponent(path, options)
 			} catch (error) {
 				console.log("ERROR: ", error)
+				program.outputHelp()
 			}
 		}
 	}
 }
 
-const args = process.argv.splice(2)
-reactCli(args)
+reactCli()
 
 export default reactCli

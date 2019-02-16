@@ -40,6 +40,8 @@
     "rimraf": "^2.6.3"
   },
   "dependencies": {
-    "is-windows": "^1.0.2"
+    "is-windows": "^1.0.2",
+    "commander": "^2.19.0",
+    "pkginfo": "^0.4.1"
   }
 }
