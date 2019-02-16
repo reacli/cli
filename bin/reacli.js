@@ -144,6 +144,12 @@ const addReduxOption = (containerOptions, componentName) => {
 	return containerOptions
 }
 
+const cleanUp = (str) => {
+	const cleanStr = str.replace(/^\s*[\r\n\n]/gmu, "\n")
+
+	return cleanStr
+}
+
 const createComponent = (path, options) => {
 	const folderName = getFolderName(path)
 	const componentName = makeComponentName(folderName)
@@ -177,8 +183,8 @@ const createComponent = (path, options) => {
 		dumbString = dumbString.replace(new RegExp(`./${componentName}.css`, "u"), `./${componentName}.scss`)
 	}
 
-	dumbString = Mustache.render(dumbString, dumbOptions)
-	containerString = Mustache.render(containerString, containerOptions)
+	dumbString = cleanUp(Mustache.render(dumbString, dumbOptions))
+	containerString = cleanUp(Mustache.render(containerString, containerOptions))
 
 	createFiles(path, componentName, dumbString, containerString, indexString, options)
 }
