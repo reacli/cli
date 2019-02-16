@@ -4,10 +4,13 @@ import fs from "fs"
 import pathModule from "path"
 import isWindows from "is-windows"
 <<<<<<< HEAD
+<<<<<<< HEAD
 import program from "commander"
 import pkgInfo from "pkginfo"
 =======
 import format from "string-template"
+=======
+>>>>>>> feat: works when all options are requested
 import Mustache from "mustache"
 >>>>>>> feat: add mustache and string-template for flow to compare them
 
@@ -103,8 +106,7 @@ const parseIndex = (componentName) => {
 	return data.replace(/MyComponent/gu, componentName)
 }
 
-const applyFlowOption = (dumbString, containerString, componentName) => {
-	// MUSTACHE
+const addFlowOption = (dumbOptions, containerOptions, componentName) => {
 	const flowContainerTags = {
 		"flowComponentTyping": "<Props, State>",
 		"flowDeclaration": "// @flow",
@@ -113,9 +115,6 @@ const applyFlowOption = (dumbString, containerString, componentName) => {
 		"flowStateType": "type State = {\n\tvalue1: string,\n};",
 	}
 
-	containerString = Mustache.render(containerString, flowContainerTags)
-
-	// STRING-TEMPLATE
 	const flowDumbTags = {
 		"flowDeclaration": "// @flow",
 		"flowDefaultPropsOut": `${componentName}.defaultProps = {\n\tvalue1: '',\n};`,
@@ -123,73 +122,26 @@ const applyFlowOption = (dumbString, containerString, componentName) => {
 		"flowPropsType": "type Props = {\n\tvalue1?: string,\n};",
 	}
 
-	dumbString = format(dumbString, flowDumbTags)
+	dumbOptions = Object.assign(dumbOptions, flowDumbTags)
+	containerOptions = Object.assign(containerOptions, flowContainerTags)
 
 	return [
-		dumbString,
-		containerString,
+		dumbOptions,
+		containerOptions,
 	]
 }
 
-const dismissFlowOption = (dumbString, containerString) => {
-	// MUSTACHE
-	const flowContainerTags = {
-		"flowComponentTyping": "",
-		"flowDeclaration": "",
-		"flowDefaultPropsStatic": "",
-		"flowPropsType": "",
-		"flowStateType": "",
+const addReduxOption = (containerOptions, componentName) => {
+	const reduxContainerFlags = {
+		"exportedFilename": `connect(mapStateToProps, mapDispatchToProps)(${componentName}Container)`,
+		"reduxImportConnect": "import { connect } from 'react-redux';",
+		"reduxMapDispatchToProps": "const mapDispatchToProps = dispatch => ({\n\t// action: (input) => dispatch(action(input)),\n});",
+		"reduxMapStateToProps": "const mapStateToProps = () => ({}); // or (state) => ({});",
 	}
 
-	containerString = Mustache.render(containerString, flowContainerTags)
+	containerOptions = Object.assign(containerOptions, reduxContainerFlags)
 
-	// STRING-TEMPLATE
-	const flowDumbTags = {
-		"flowDeclaration": "",
-		"flowDefaultPropsOut": "",
-		"flowDumbComponentPropsTyping": "",
-		"flowPropsType": "",
-	}
-
-	dumbString = format(dumbString, flowDumbTags)
-
-	// Remove empty lines
-	containerString = containerString.replace(/^\s*[\r\n\n]/gmu, "\n")
-	dumbString = dumbString.replace(/^\s*[\r\n\n]/gmu, "\n")
-
-	return [
-		dumbString,
-		containerString,
-	]
-}
-
-
-// REDUX
-const reduxContainerFlags = {
-	"redux-import-connect": "import { connect } from 'react-redux';",
-	"redux-map-dispatch-to-props": "const mapDispatchToProps = dispatch => ({\n\t// action: (input) => dispatch(action(input)),\n});",
-	"redux-map-state-to-props": "const mapStateToProps = () => ({}); // or (state) => ({});",
-}
-
-const applyReduxOption = (containerString, componentName) => {
-	for (let key in reduxContainerFlags) {
-		containerString = containerString.replace(new RegExp(`\\[\\[${key}\\]\\]`, "u"), reduxContainerFlags[key])
-	}
-	containerString = containerString.replace(new RegExp(`\\[\\[redux-connection\\]\\]${componentName}Container`, "u"), `connect(mapStateToProps, mapDispatchToProps)(${componentName}Container)`)
-
-	return containerString
-}
-
-const dismissReduxOption = (containerString) => {
-	for (let key in reduxContainerFlags) {
-		containerString = containerString.replace(new RegExp(`\\[\\[${key}\\]\\]`, "u"), "").trim()
-	}
-	containerString = containerString.replace(new RegExp("\\[\\[redux-connection\\]\\]", "u"), "")
-
-	// Remove empty lines
-	containerString = containerString.replace(/^\s*[\r\n\n]/gmu, "\n")
-
-	return containerString
+	return containerOptions
 }
 
 const createComponent = (path, options) => {
@@ -206,23 +158,27 @@ const createComponent = (path, options) => {
 	let containerString = parseContainer(componentName)
 	const indexString = parseIndex(componentName)
 
+	let dumbOptions = {}
+	let containerOptions = {
+		"exportedFilename": `${componentName}Container`,
+	}
+
 	if (options.flow) {
-		[dumbString, containerString] = applyFlowOption(dumbString, containerString, componentName)
+		[dumbOptions, containerOptions] = addFlowOption(dumbOptions, containerOptions, componentName)
 		console.log("Flow option activated !")
-	} else {
-		[dumbString, containerString] = dismissFlowOption(dumbString, containerString)
 	}
 
 	if (options.redux) {
-		containerString = applyReduxOption(containerString, componentName)
+		containerOptions = addReduxOption(containerOptions, componentName)
 		console.log("Redux option activated !")
-	} else {
-		containerString = dismissReduxOption(containerString)
 	}
 
 	if (options.scss) {
 		dumbString = dumbString.replace(new RegExp(`./${componentName}.css`, "u"), `./${componentName}.scss`)
 	}
+
+	dumbString = Mustache.render(dumbString, dumbOptions)
+	containerString = Mustache.render(containerString, containerOptions)
 
 	createFiles(path, componentName, dumbString, containerString, indexString, options)
 }
