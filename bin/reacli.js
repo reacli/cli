@@ -85,25 +85,20 @@ const createFiles = (path, componentName, dumbString, containerString, indexStri
 	})
 }
 
-const parseDumbComponent = (componentName) => {
-	const filePath = pathModule.resolve("/", __dirname, "../patterns/my-component/components/MyComponent.template")
-	const data = fs.readFileSync(filePath).toString()
+const prepareFiles = (componentName) => {
+	const dumbPath = pathModule.resolve("/", __dirname, "../patterns/my-component/components/MyComponent.template")
+	const containerPath = pathModule.resolve("/", __dirname, "../patterns/my-component/components/MyComponentContainer.template")
+	const indexPath = pathModule.resolve("/", __dirname, "../patterns/my-component/index.template")
 
-	return data.replace(/MyComponent/gu, componentName)
-}
+	const dumbString = fs.readFileSync(dumbPath).toString()
+	const containerString = fs.readFileSync(containerPath).toString()
+	const indexString = fs.readFileSync(indexPath).toString()
 
-const parseContainer = (componentName) => {
-	const filePath = pathModule.resolve("/", __dirname, "../patterns/my-component/components/MyComponentContainer.template")
-	const data = fs.readFileSync(filePath).toString()
-
-	return data.replace(/MyComponent/gu, componentName)
-}
-
-const parseIndex = (componentName) => {
-	const filePath = pathModule.resolve("/", __dirname, "../patterns/my-component/index.template")
-	const data = fs.readFileSync(filePath).toString()
-
-	return data.replace(/MyComponent/gu, componentName)
+	return [
+		dumbString,
+		containerString,
+		indexString,
+	].map((str) => str.replace(/MyComponent/gu, componentName))
 }
 
 const addFlowOption = (dumbOptions, containerOptions, componentName) => {
@@ -160,9 +155,7 @@ const createComponent = (path, options) => {
 	fs.mkdirSync(path)
 	fs.mkdirSync(componentsPath)
 
-	let dumbString = parseDumbComponent(componentName)
-	let containerString = parseContainer(componentName)
-	const indexString = parseIndex(componentName)
+	let [dumbString, containerString, indexString] = prepareFiles(componentName)
 
 	let dumbOptions = {}
 	let containerOptions = {
