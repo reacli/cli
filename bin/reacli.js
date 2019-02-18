@@ -5,6 +5,7 @@ import pathModule from "path"
 import isWindows from "is-windows"
 import program from "commander"
 import pkgInfo from "pkginfo"
+import Mustache from "mustache"
 
 // Validate name
 const validateName = (path) => {
@@ -77,106 +78,64 @@ const createFiles = (path, componentName, dumbString, containerString, indexStri
 	})
 }
 
-const parseDumbComponent = (componentName) => {
-	const filePath = pathModule.resolve("/", __dirname, "../patterns/my-component/components/MyComponent.template")
-	const data = fs.readFileSync(filePath).toString()
+const prepareFiles = (componentName) => {
+	const dumbPath = pathModule.resolve("/", __dirname, "../patterns/my-component/components/MyComponent.template")
+	const containerPath = pathModule.resolve("/", __dirname, "../patterns/my-component/components/MyComponentContainer.template")
+	const indexPath = pathModule.resolve("/", __dirname, "../patterns/my-component/index.template")
 
-	return data.replace(/MyComponent/gu, componentName)
-}
-
-const parseContainer = (componentName) => {
-	const filePath = pathModule.resolve("/", __dirname, "../patterns/my-component/components/MyComponentContainer.template")
-	const data = fs.readFileSync(filePath).toString()
-
-	return data.replace(/MyComponent/gu, componentName)
-}
-
-const parseIndex = (componentName) => {
-	const filePath = pathModule.resolve("/", __dirname, "../patterns/my-component/index.template")
-	const data = fs.readFileSync(filePath).toString()
-
-	return data.replace(/MyComponent/gu, componentName)
-}
-
-// FLOW
-const flowContainerTags = {
-	"flow-component-typing": "<Props, State>",
-	"flow-declaration": "// @flow",
-	"flow-default-props-static": "static defaultProps = {\n\n\t};",
-	"flow-props-type": "type Props = {\n\n};",
-	"flow-state-type": "type State = {\n\tvalue1: string,\n};",
-}
-
-const flowDumbTags = {
-	"flow-declaration": "// @flow",
-	"flow-default-props-out": "type State = {\n\tvalue1: string,\n};",
-	"flow-dumb-component-props-typing": ": Props",
-	"flow-props-type": "type Props = {\n\tvalue1?: string,\n};",
-}
-
-const applyFlowOption = (dumbString, containerString, componentName) => {
-	for (let key in flowContainerTags) {
-		containerString = containerString.replace(new RegExp(`\\[\\[${key}\\]\\]`, "u"), flowContainerTags[key])
-	}
-
-	for (let key in flowDumbTags) {
-		dumbString = dumbString.replace(new RegExp(`\\[\\[${key}\\]\\]`, "u"), flowDumbTags[key])
-	}
-
-	dumbString = dumbString.replace(/\[\[flow-default-props-out\]\]/gu, `${componentName}.defaultProps = {\n\tvalue1: '',\n};`);
+	const dumbString = fs.readFileSync(dumbPath).toString()
+	const containerString = fs.readFileSync(containerPath).toString()
+	const indexString = fs.readFileSync(indexPath).toString()
 
 	return [
 		dumbString,
 		containerString,
-	]
+		indexString,
+	].map((str) => str.replace(/MyComponent/gu, componentName))
 }
 
-const dismissFlowOption = (dumbString, containerString) => {
-	for (let key in flowContainerTags) {
-		containerString = containerString.replace(new RegExp(`\\[\\[${key}\\]\\]`, "u"), "").trim()
+const addFlowOption = (dumbOptions, containerOptions, componentName) => {
+	const flowContainerTags = {
+		"flowComponentTyping": "<Props, State>",
+		"flowDeclaration": "// @flow",
+		"flowDefaultPropsStatic": "static defaultProps = {\n\n\t};",
+		"flowPropsType": "type Props = {\n\n};",
+		"flowStateType": "type State = {\n\tvalue1: string,\n};",
 	}
 
-	for (let key in flowDumbTags) {
-		dumbString = dumbString.replace(new RegExp(`\\[\\[${key}\\]\\]`, "u"), "").trim()
+	const flowDumbTags = {
+		"flowDeclaration": "// @flow",
+		"flowDefaultPropsOut": `${componentName}.defaultProps = {\n\tvalue1: '',\n};`,
+		"flowDumbComponentPropsTyping": ": Props",
+		"flowPropsType": "type Props = {\n\tvalue1?: string,\n};",
 	}
 
-	// Remove empty lines
-	containerString = containerString.replace(/^\s*[\r\n\n]/gmu, "\n")
-	dumbString = dumbString.replace(/^\s*[\r\n\n]/gmu, "\n")
+	dumbOptions = Object.assign(dumbOptions, flowDumbTags)
+	containerOptions = Object.assign(containerOptions, flowContainerTags)
 
 	return [
-		dumbString,
-		containerString,
+		dumbOptions,
+		containerOptions,
 	]
 }
 
+const addReduxOption = (containerOptions, componentName) => {
+	const reduxContainerFlags = {
+		"exportedFilename": `connect(mapStateToProps, mapDispatchToProps)(${componentName}Container)`,
+		"reduxImportConnect": "import { connect } from 'react-redux';",
+		"reduxMapDispatchToProps": "const mapDispatchToProps = dispatch => ({\n\t// action: (input) => dispatch(action(input)),\n});",
+		"reduxMapStateToProps": "const mapStateToProps = () => ({}); // or (state) => ({});",
+	}
 
-// REDUX
-const reduxContainerFlags = {
-	"redux-import-connect": "import { connect } from 'react-redux';",
-	"redux-map-dispatch-to-props": "const mapDispatchToProps = dispatch => ({\n\t// action: (input) => dispatch(action(input)),\n});",
-	"redux-map-state-to-props": "const mapStateToProps = () => ({}); // or (state) => ({});",
+	containerOptions = Object.assign(containerOptions, reduxContainerFlags)
+
+	return containerOptions
 }
 
-const applyReduxOption = (containerString, componentName) => {
-	for (let key in reduxContainerFlags) {
-		containerString = containerString.replace(new RegExp(`\\[\\[${key}\\]\\]`, "u"), reduxContainerFlags[key])
-	}
-	containerString = containerString.replace(new RegExp(`\\[\\[redux-connection\\]\\]${componentName}Container`, "u"), `connect(mapStateToProps, mapDispatchToProps)(${componentName}Container)`)
+const cleanUp = (str) => {
+	const cleanStr = str.replace(/^\s*[\r\n\n]/gmu, "\n")
 
-	return containerString
-}
-
-const dismissReduxOption = (containerString) => {
-	for (let key in reduxContainerFlags) {
-		containerString = containerString.replace(new RegExp(`\\[\\[${key}\\]\\]`, "u"), "").trim()
-	}
-	containerString = containerString.replace(new RegExp("\\[\\[redux-connection\\]\\]", "u"), "")
-
-	// Remove empty lines
-	containerString = containerString.replace(/^\s*[\r\n\n]/gmu, "\n")
-
-	return containerString
+	return cleanStr
 }
 
 const createComponent = (path, options) => {
@@ -189,27 +148,29 @@ const createComponent = (path, options) => {
 	fs.mkdirSync(path)
 	fs.mkdirSync(componentsPath)
 
-	let dumbString = parseDumbComponent(componentName)
-	let containerString = parseContainer(componentName)
-	const indexString = parseIndex(componentName)
+	let [dumbString, containerString, indexString] = prepareFiles(componentName)
+
+	let dumbOptions = {}
+	let containerOptions = {
+		"exportedFilename": `${componentName}Container`,
+	}
 
 	if (options.flow) {
-		[dumbString, containerString] = applyFlowOption(dumbString, containerString, componentName)
+		[dumbOptions, containerOptions] = addFlowOption(dumbOptions, containerOptions, componentName)
 		console.log("Flow option activated !")
-	} else {
-		[dumbString, containerString] = dismissFlowOption(dumbString, containerString)
 	}
 
 	if (options.redux) {
-		containerString = applyReduxOption(containerString, componentName)
+		containerOptions = addReduxOption(containerOptions, componentName)
 		console.log("Redux option activated !")
-	} else {
-		containerString = dismissReduxOption(containerString)
 	}
 
 	if (options.scss) {
 		dumbString = dumbString.replace(new RegExp(`./${componentName}.css`, "u"), `./${componentName}.scss`)
 	}
+
+	dumbString = cleanUp(Mustache.render(dumbString, dumbOptions))
+	containerString = cleanUp(Mustache.render(containerString, containerOptions))
 
 	createFiles(path, componentName, dumbString, containerString, indexString, options)
 }

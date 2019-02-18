@@ -1,17 +1,17 @@
-[[flow-declaration]]
+{{{flowDeclaration}}}
 
 import React, { Component } from "react";
 
 import MyComponent from "./MyComponent";
 
-[[redux-import-connect]]
+{{{reduxImportConnect}}}
 
-[[flow-props-type]]
+{{{flowPropsType}}}
 
-[[flow-state-type]]
+{{{flowStateType}}}
 
-class MyComponentContainer extends Component[[flow-component-typing]] {
-  [[flow-default-props-static]]
+class MyComponentContainer extends Component{{{flowComponentTyping}}} {
+  {{{flowDefaultPropsStatic}}}
 
   constructor(props) {
     super(props);
@@ -27,8 +27,8 @@ class MyComponentContainer extends Component[[flow-component-typing]] {
   }
 }
 
-[[redux-map-state-to-props]]
+{{{reduxMapStateToProps}}}
 
-[[redux-map-dispatch-to-props]]
+{{{reduxMapDispatchToProps}}}
 
-export default [[redux-connection]]MyComponentContainer;
+export default {{{exportedFilename}}};

@@ -42,6 +42,7 @@
   "dependencies": {
     "is-windows": "^1.0.2",
     "commander": "^2.19.0",
-    "pkginfo": "^0.4.1"
+    "pkginfo": "^0.4.1",
+    "mustache": "^3.0.1"
   }
 }

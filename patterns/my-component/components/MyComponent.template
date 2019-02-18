@@ -1,17 +1,17 @@
-[[flow-declaration]]
+{{{flowDeclaration}}}
 
 import React from 'react';
 
 import style from './MyComponent.css';
 
-[[flow-props-type]]
+{{{flowPropsType}}}
 
-const MyComponent = (props[[flow-dumb-component-props-typing]]) => {
+const MyComponent = (props{{{flowDumbComponentPropsTyping}}}) => {
   const { value1 } = props;
   
   return (<div>{value1}</div>)
 };
 
-[[flow-default-props-out]]
+{{{flowDefaultPropsOut}}}
 
 export default MyComponent;
