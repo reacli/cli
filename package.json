@@ -27,7 +27,7 @@
   "bugs": {
     "url": "https://github.com/reacli/cli/issues"
   },
-  "homepage": "https://github.com/reacli/cli#readme",
+  "homepage": "https://reacli.github.io/",
   "devDependencies": {
     "@commitlint/cli": "^7.0.0",
     "@commitlint/config-conventional": "^7.0.1",
