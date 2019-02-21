@@ -5,10 +5,39 @@ import program from "commander"
 import pkgInfo from "pkginfo"
 
 import { validateName, validatePath } from "../lib/utils/validators"
-import { createComponent } from "../lib/core"
+import { createComponent, createHook } from "../lib/core"
 
+const createElement = async ({ firstParam = null, pathsToComponentsToCreate = [], options = [] }) => {
+	// Cmd reacli component <path> creates a component architecture
 
-const reactCli = async () => {
+	const promises = []
+	for (let relativePath of pathsToComponentsToCreate) {
+		const path = pathModule.resolve(relativePath)
+
+		if (validatePath(path) && validateName(path)) {
+			try {
+				switch (firstParam) {
+				case "component":
+					promises.push(createComponent(path, options))
+					break;
+				case "hook":
+					promises.push(createHook(path, options))
+					break;
+				default:
+					program.outputHelp()
+					break;
+				}
+			} catch (error) {
+				console.log("ERROR: ", error)
+				program.outputHelp()
+			}
+		}
+	}
+
+	await Promise.all(promises)
+}
+
+const reactCli = () => {
 
 	pkgInfo(module, "version");
 	const cliVersion = module.exports.version;
@@ -36,24 +65,9 @@ const reactCli = async () => {
 		options = Object.assign(options, { redux: true })
 	}
 
-	// Cmd reacli component <path> creates a component architecture
-	if (firstParam === "component") {
-		const promises = []
-		for (let relativePath of pathsToComponentsToCreate) {
-			const path = pathModule.resolve(relativePath)
-
-			if (validatePath(path) && validateName(path)) {
-				try {
-					promises.push(createComponent(path, options))
-				} catch (error) {
-					console.log("ERROR: ", error)
-					program.outputHelp()
-				}
-			}
-		}
-
-		await Promise.all(promises)
-	}
+	createElement({ firstParam,
+		options,
+		pathsToComponentsToCreate })
 }
 
 reactCli()
