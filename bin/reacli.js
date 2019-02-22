@@ -8,7 +8,7 @@ import { validateName, validatePath } from "../lib/utils/validators"
 import { createComponent } from "../lib/core"
 
 
-const reactCli = () => {
+const reactCli = async () => {
 
 	pkgInfo(module, "version");
 	const cliVersion = module.exports.version;
@@ -42,7 +42,7 @@ const reactCli = () => {
 
 		if (validatePath(path) && validateName(path)) {
 			try {
-				createComponent(path, options)
+				await createComponent(path, options)
 			} catch (error) {
 				console.log("ERROR: ", error)
 				program.outputHelp()
