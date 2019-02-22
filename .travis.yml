@@ -4,3 +4,11 @@ node_js:
   - "6"
   - "5"
   - "4"
+
+addons:
+  sonarcloud:
+    organization: "reacli_cli"
+    token:
+      secure: SONAR_TOKEN
+script:
+  - sonar-scanner
