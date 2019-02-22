@@ -7,6 +7,6 @@ addons:
   sonarcloud:
     organization: "reacli_cli"
     token:
-      secure: SONAR_TOKEN
+      secure: ${SONAR_TOKEN}
 script:
   - sonar-scanner
