@@ -1,4 +1,4 @@
-# Issue #issue_number or [TITLE]
+# Fixes #issue_number or [TITLE]
 
 **Summary:**
 
