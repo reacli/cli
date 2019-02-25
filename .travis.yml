@@ -10,4 +10,4 @@ addons:
     token:
       secure: ${SONAR_TOKEN}
 script:
-  - sonar-scanner
+  - sonar-scanner -X -Dsonar.branch=${TRAVIS_BRANCH} -Dsonar.projectVersion=${SONAR_VERSION}
