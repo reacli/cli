@@ -3,10 +3,30 @@
 import pathModule from "path"
 import program from "commander"
 import pkgInfo from "pkginfo"
+import inquirer from "inquirer";
 
 import { validateName, validatePath } from "../lib/utils/validators"
 import { createComponent } from "../lib/core"
 
+
+const askQuestions = () => {
+	const questions = [
+		{
+			choices: ["Component", "Hook"],
+			message: "What would you like to create?",
+			name: "TYPE",
+			type: "list",
+		},
+		{
+			message: "Enter the path where you would like your component to be created.",
+			name: "PATH",
+			type: "confirm",
+			when: (answers) => answers.TYPE === "Component",
+		},
+	];
+
+	return inquirer.prompt(questions);
+};
 
 const reactCli = async () => {
 
@@ -22,8 +42,14 @@ const reactCli = async () => {
 		.parse(process.argv)
 
 	const { args } = program;
-	const firstParam = args.shift();
-	const secondParam = args.shift();
+
+	if (!args.length) {
+		const answers = await askQuestions()
+		console.log(answers)
+	}
+
+	const firstParam = args.shift()
+	const secondParam = args.shift()
 
 	let options = {}
 	if (program.flow) {

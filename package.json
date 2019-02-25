@@ -41,6 +41,7 @@
   },
   "dependencies": {
     "commander": "^2.19.0",
+    "inquirer": "^6.2.2",
     "is-windows": "^1.0.2",
     "mustache": "^3.0.1",
     "pkg-dir": "^3.0.0",
