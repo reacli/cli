@@ -3,12 +3,20 @@
 import pathModule from "path"
 import program from "commander"
 import pkgInfo from "pkginfo"
+import chalk from "chalk"
+import figlet from "figlet"
 
 import { createComponent } from "../lib/core"
 import { interactiveCLI } from "../lib/interactiveCLI";
 
 
 const reactCli = async () => {
+
+	// Welcome message
+	console.log(chalk.green(figlet.textSync("Reacli", {
+		horizontalLayout: "default",
+		verticalLayout: "default",
+	})));
 
 	pkgInfo(module, "version");
 	const cliVersion = module.exports.version;
