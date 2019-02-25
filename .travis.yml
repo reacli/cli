@@ -6,7 +6,7 @@ node_js:
 
 addons:
   sonarcloud:
-    organization: "reacli_cli"
+    organization: "reacli"
     token:
       secure: ${SONAR_TOKEN}
 script:
