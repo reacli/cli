@@ -6,7 +6,7 @@ import pkgInfo from "pkginfo"
 import chalk from "chalk"
 import figlet from "figlet"
 
-import { createComponent } from "../lib/core"
+import { createComponent, loadOptionsInConfigFileIfExists } from "../lib/core"
 import { interactiveCLI } from "../lib/interactiveCLI";
 
 
@@ -53,7 +53,8 @@ const reactCli = async () => {
 	// Cmd reacli component <path> creates a component architecture
 	if (firstParam === "component") {
 		const path = pathModule.resolve(secondParam)
-		await createComponent(path, options)
+		options = await loadOptionsInConfigFileIfExists(path, options)
+		createComponent(path, options)
 	}
 }
 
