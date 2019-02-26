@@ -21,9 +21,9 @@ const reactCli = async () => {
 		.option("--redux", "Add Redux to the template")
 		.parse(process.argv)
 
-	const { args } = program;
-	const firstParam = args.shift();
-	const secondParam = args.shift();
+	const { args } = program
+	const firstParam = args.shift()
+	const pathsToComponentsToCreate = args
 
 	let options = {}
 	if (program.flow) {
@@ -38,16 +38,21 @@ const reactCli = async () => {
 
 	// Cmd reacli component <path> creates a component architecture
 	if (firstParam === "component") {
-		const path = pathModule.resolve(secondParam)
+		const promises = []
+		for (let relativePath of pathsToComponentsToCreate) {
+			const path = pathModule.resolve(relativePath)
 
-		if (validatePath(path) && validateName(path)) {
-			try {
-				await createComponent(path, options)
-			} catch (error) {
-				console.log("ERROR: ", error)
-				program.outputHelp()
+			if (validatePath(path) && validateName(path)) {
+				try {
+					promises.push(createComponent(path, options))
+				} catch (error) {
+					console.log("ERROR: ", error)
+					program.outputHelp()
+				}
 			}
 		}
+
+		await Promise.all(promises)
 	}
 }
 
