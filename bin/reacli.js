@@ -30,15 +30,14 @@ const reactCli = async () => {
 		.parse(process.argv)
 
 	let options = {}
-
-	const { args } = program;
+	const { args } = program
 
 	if (!args.length) {
 		options = await interactiveCLI(options)
 	}
 
 	const firstParam = args.shift()
-	const secondParam = args.shift()
+	const pathsToComponentsToCreate = args
 
 	if (program.flow) {
 		options = Object.assign(options, { flow: true })
@@ -52,9 +51,14 @@ const reactCli = async () => {
 
 	// Cmd reacli component <path> creates a component architecture
 	if (firstParam === "component") {
-		const path = pathModule.resolve(secondParam)
-		options = await loadOptionsInConfigFileIfExists(path, options)
-		createComponent(path, options)
+		const promises = [];
+		for (let relativePath of pathsToComponentsToCreate) {
+			const path = pathModule.resolve(relativePath)
+			options = promises.push(loadOptionsInConfigFileIfExists(path, options))
+			createComponent(path, options)
+		}
+
+		await Promise.all(promises)
 	}
 }
 
