@@ -51,9 +51,10 @@ const reactCli = async () => {
 
 	// Cmd reacli component <path> creates a component architecture
 	if (firstParam === "component") {
+		options = await loadOptionsInConfigFileIfExists(process.cwd(), options)
+
 		for (let relativePath of pathsToComponentsToCreate) {
 			const path = pathModule.resolve(relativePath)
-			options = await loadOptionsInConfigFileIfExists(path, options)
 			createComponent(path, options)
 		}
 
