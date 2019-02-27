@@ -51,14 +51,12 @@ const reactCli = async () => {
 
 	// Cmd reacli component <path> creates a component architecture
 	if (firstParam === "component") {
-		const promises = [];
 		for (let relativePath of pathsToComponentsToCreate) {
 			const path = pathModule.resolve(relativePath)
-			options = promises.push(loadOptionsInConfigFileIfExists(path, options))
+			options = await loadOptionsInConfigFileIfExists(path, options)
 			createComponent(path, options)
 		}
 
-		await Promise.all(promises)
 	}
 }
 
