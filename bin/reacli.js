@@ -7,7 +7,7 @@ import chalk from "chalk"
 import figlet from "figlet"
 
 import { createComponent, loadOptionsInConfigFileIfExists } from "../lib/core"
-import { interactiveCLI } from "../lib/interactiveCLI";
+import interactiveCLI from "../lib/interactiveCLI"
 
 
 const reactCli = async () => {
