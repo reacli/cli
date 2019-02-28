@@ -6,7 +6,7 @@ import pkgInfo from "pkginfo"
 import chalk from "chalk"
 import figlet from "figlet"
 
-import { createComponent, loadOptionsInConfigFileIfExists } from "../lib/core"
+import { createComponent, loadReacliConfigurationFileIfNotIgnored } from "../lib/core"
 import { interactiveCLI } from "../lib/interactiveCLI";
 
 
@@ -27,13 +27,14 @@ const reactCli = async () => {
 		.option("-f, --flow", "Add flow to the template")
 		.option("--scss", "Use SCSS instead of classic css")
 		.option("--redux", "Add Redux to the template")
+		.option("-i, --ignore-config-file", "Ignore the '.reacli' optional configuration file")
 		.parse(process.argv)
 
 	let options = {}
 	const { args } = program
 
 	if (!args.length) {
-		options = await interactiveCLI(options)
+		options = await interactiveCLI(program.ignoreConfigFile, options)
 	}
 
 	const firstParam = args.shift()
@@ -51,7 +52,8 @@ const reactCli = async () => {
 
 	// Cmd reacli component <path> creates a component architecture
 	if (firstParam === "component") {
-		options = await loadOptionsInConfigFileIfExists(process.cwd(), options)
+
+		options = await loadReacliConfigurationFileIfNotIgnored(program.ignoreConfigFile, process.cwd(), options)
 
 		for (let relativePath of pathsToComponentsToCreate) {
 			const path = pathModule.resolve(relativePath)
