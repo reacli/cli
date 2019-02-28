@@ -33,7 +33,7 @@ const reactCli = async () => {
 	const { args } = program
 
 	if (!args.length) {
-		options = await interactiveCLI(options)
+		options = await interactiveCLI()
 	}
 
 	const firstParam = args.shift()
