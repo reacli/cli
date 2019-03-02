@@ -3,9 +3,12 @@
 import pathModule from "path"
 import program from "commander"
 import pkgInfo from "pkginfo"
+import chalk from "chalk"
+import figlet from "figlet"
 
-import { validateName, validatePath } from "../lib/utils/validators"
-import { createComponent, createHook } from "../lib/core"
+import { createComponent, createHook, loadOptionsInConfigFileIfExists } from "../lib/core"
+import interactiveCLI from "../lib/interactiveCLI"
+import { validatePath, validateName } from "../lib/utils/validators"
 
 const createElement = async ({ firstParam = null, pathsToComponentsToCreate = [], options = [] }) => {
 	// Cmd reacli component <path> creates a component architecture
@@ -37,7 +40,13 @@ const createElement = async ({ firstParam = null, pathsToComponentsToCreate = []
 	await Promise.all(promises)
 }
 
-const reactCli = () => {
+const reactCli = async () => {
+
+	// Welcome message
+	console.log(chalk.green(figlet.textSync("Reacli", {
+		horizontalLayout: "default",
+		verticalLayout: "default",
+	})));
 
 	pkgInfo(module, "version");
 	const cliVersion = module.exports.version;
@@ -50,11 +59,16 @@ const reactCli = () => {
 		.option("--redux", "Add Redux to the template")
 		.parse(process.argv)
 
+	let options = {}
 	const { args } = program
+
+	if (!args.length) {
+		options = await interactiveCLI()
+	}
+
 	const firstParam = args.shift()
 	const pathsToComponentsToCreate = args
 
-	let options = {}
 	if (program.flow) {
 		options = Object.assign(options, { flow: true })
 	}
@@ -65,9 +79,13 @@ const reactCli = () => {
 		options = Object.assign(options, { redux: true })
 	}
 
-	createElement({ firstParam,
+	options = await loadOptionsInConfigFileIfExists(process.cwd(), options)
+
+	createElement({
+		firstParam,
 		options,
-		pathsToComponentsToCreate })
+		pathsToComponentsToCreate,
+	})
 }
 
 reactCli()
