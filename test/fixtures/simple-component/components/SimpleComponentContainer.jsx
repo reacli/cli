@@ -1,9 +1,9 @@
 
 import React, { Component } from "react";
 
-import TestComponent from "./TestComponent";
+import SimpleComponent from "./SimpleComponent";
 
-class TestComponentContainer extends Component {
+class SimpleComponentContainer extends Component {
 
   constructor(props) {
     super(props);
@@ -15,8 +15,8 @@ class TestComponentContainer extends Component {
 
   render() {
     const { value1 } = this.state;
-    return (<TestComponent value1={value1} />)
+    return (<SimpleComponent value1={value1} />)
   }
 }
 
-export default TestComponentContainer;
+export default SimpleComponentContainer;

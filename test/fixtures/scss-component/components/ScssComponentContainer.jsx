@@ -1,9 +1,9 @@
 
 import React, { Component } from "react";
 
-import TestComponent from "./TestComponent";
+import ScssComponent from "./ScssComponent";
 
-class TestComponentContainer extends Component {
+class ScssComponentContainer extends Component {
 
   constructor(props) {
     super(props);
@@ -15,8 +15,8 @@ class TestComponentContainer extends Component {
 
   render() {
     const { value1 } = this.state;
-    return (<TestComponent value1={value1} />)
+    return (<ScssComponent value1={value1} />)
   }
 }
 
-export default TestComponentContainer;
+export default ScssComponentContainer;

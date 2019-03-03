@@ -36,6 +36,7 @@
     "@commitlint/cli": "^7.0.0",
     "@commitlint/config-conventional": "^7.0.1",
     "babel-jest": "^24.1.0",
+    "dir-compare": "^1.7.2",
     "eslint": "^5.9.0",
     "husky": "^0.14.3",
     "jest": "^24.1.0",
