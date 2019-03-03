@@ -9,6 +9,7 @@ import common from "../common"
 const basePath = path.resolve(__dirname, path.basename(__filename, ".js"))
 const fixturePath = path.resolve(basePath, "test-files")
 const Dir = Tacks.Dir
+const File = Tacks.File
 
 const withFixture = (testDone, fixture, tester) => {
 	const removeAndDone = (err) => {
@@ -120,5 +121,34 @@ describe("Component creation with CLI", () => {
                 done()
             })
         })
-    })
+		})
+		
+		test("reacli component ./pre-configured-component", (testDone) => {
+			const fixture = new Tacks(Dir({
+				"package.json": File({
+					name: "this-is-a-cool-test",
+				}),
+				".reacli": File({
+					redux: true,
+					flow: true,
+					scss: true,
+				}),
+			}))
+
+			const componentName = "pre-configured-component"
+			const expectedPath = path.resolve(__dirname, "..", "fixtures", componentName)
+			const componentPath = path.resolve(`${fixturePath}/${componentName}`)
+	
+			withFixture(testDone, fixture, (done) => {
+					common(["component", componentPath], {
+							cwd: fixturePath,
+					}, (err, code, stdout, stderr) => {
+							const { same } = dircompare.compareSync(expectedPath, componentPath);
+							
+							expect(same).toBeTruthy()
+							expect(code).toEqual(0)
+							done()
+					})
+			})
+	})
 })

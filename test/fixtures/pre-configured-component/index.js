@@ -1,0 +1,3 @@
+import PreConfiguredComponentContainer from './components/PreConfiguredComponentContainer';
+
+export default PreConfiguredComponentContainer;
