@@ -9,5 +9,8 @@ addons:
     organization: "reacli"
     token:
       secure: ${SONAR_TOKEN}
+install:
+    - npm install
 script:
+  - npm test
   - sonar-scanner -X -Dsonar.projectVersion=${SONAR_VERSION}
