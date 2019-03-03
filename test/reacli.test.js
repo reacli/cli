@@ -12,6 +12,9 @@ const Dir = Tacks.Dir
 const withFixture = (testDone, fixture, tester) => {
 	const removeAndDone = (err) => {
 		if (err) throw err
+		// Comment these two lines if the tested component
+		// fixture does not exist yet, then copy-paste it 
+		// into /fixtures and uncomment back those lines
 		fixture.remove(fixturePath)
 		rimraf.sync(basePath)
 		testDone()
