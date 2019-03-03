@@ -102,6 +102,25 @@ describe("reacli CLI commands", () => {
 				})
 			})
 		})
+
+		test("reacli component ./combination-component --redux --scss", (testDone) => {
+			const fixture = new Tacks(Dir())
+			const componentName = "combination-component"
+			const expectedPath = path.resolve(__dirname, "fixtures", componentName)
+			const componentPath = path.resolve(`${fixturePath}/${componentName}`)
+		
+			withFixture(testDone, fixture, (done) => {
+				common(["component", componentPath, "--redux", "--scss"], {
+					cwd: fixturePath,
+				}, (err, code, stdout, stderr) => {
+					const { same } = dircompare.compareSync(expectedPath, componentPath);
+					
+					expect(same).toBeTruthy()
+					expect(code).toEqual(0)
+					done()
+				})
+			})
+		})
 	})
 	
 	describe("Hook creation with CLI", () => {
@@ -124,7 +143,7 @@ describe("reacli CLI commands", () => {
 			})
 		})
 		
-		test("reacli hook ./scss-hook", (testDone) => {
+		test("reacli hook ./scss-hook --scss", (testDone) => {
 			const fixture = new Tacks(Dir())
 			const hookName = "scss-hook"
 			const expectedPath = path.resolve(__dirname, "fixtures", hookName)
