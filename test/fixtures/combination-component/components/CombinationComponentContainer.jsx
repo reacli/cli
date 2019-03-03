@@ -1,0 +1,42 @@
+// @flow
+
+import React, { Component } from "react";
+
+import CombinationComponent from "./CombinationComponent";
+
+import { connect } from 'react-redux';
+
+type Props = {
+
+};
+
+type State = {
+	value1: string,
+};
+
+class CombinationComponentContainer extends Component<Props, State> {
+  static defaultProps = {
+
+	};
+
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      value1: "test",
+    };
+  }
+
+  render() {
+    const { value1 } = this.state;
+    return (<CombinationComponent value1={value1} />)
+  }
+}
+
+const mapStateToProps = () => ({}); // or (state) => ({});
+
+const mapDispatchToProps = dispatch => ({
+	// action: (input) => dispatch(action(input)),
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(CombinationComponentContainer);
