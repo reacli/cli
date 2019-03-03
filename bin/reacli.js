@@ -6,9 +6,39 @@ import pkgInfo from "pkginfo"
 import chalk from "chalk"
 import figlet from "figlet"
 
-import { createComponent, loadReacliConfigurationFileIfNotIgnored } from "../lib/core"
-import { interactiveCLI } from "../lib/interactiveCLI";
+import { createComponent, createHook, loadReacliConfigurationFileIfNotIgnored } from "../lib/core"
+import interactiveCLI from "../lib/interactiveCLI"
+import { validatePath, validateName } from "../lib/utils/validators"
 
+const createElement = async ({ firstParam = null, pathsToComponentsToCreate = [], options = [] }) => {
+	// Cmd reacli component <path> creates a component architecture
+
+	const promises = []
+	for (let relativePath of pathsToComponentsToCreate) {
+		const path = pathModule.resolve(relativePath)
+
+		if (validatePath(path) && validateName(path)) {
+			try {
+				switch (firstParam) {
+				case "component":
+					promises.push(createComponent(path, options))
+					break;
+				case "hook":
+					promises.push(createHook(path, options))
+					break;
+				default:
+					program.outputHelp()
+					break;
+				}
+			} catch (error) {
+				console.log("ERROR: ", error)
+				program.outputHelp()
+			}
+		}
+	}
+
+	await Promise.all(promises)
+}
 
 const reactCli = async () => {
 
@@ -50,17 +80,13 @@ const reactCli = async () => {
 		options = Object.assign(options, { redux: true })
 	}
 
-	// Cmd reacli component <path> creates a component architecture
-	if (firstParam === "component") {
+	options = await loadReacliConfigurationFileIfNotIgnored(program.ignoreConfigFile, process.cwd(), options)
 
-		options = await loadReacliConfigurationFileIfNotIgnored(program.ignoreConfigFile, process.cwd(), options)
-
-		for (let relativePath of pathsToComponentsToCreate) {
-			const path = pathModule.resolve(relativePath)
-			createComponent(path, options)
-		}
-
-	}
+	createElement({
+		firstParam,
+		options,
+		pathsToComponentsToCreate,
+	})
 }
 
 reactCli()
