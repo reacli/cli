@@ -3,11 +3,15 @@ dist: trusty
 node_js:
   - "10"
   - "11"
-
+cache: npm
 addons:
   sonarcloud:
     organization: "reacli"
     token:
       secure: ${SONAR_TOKEN}
+install:
+    - npm install
 script:
+  - npm run build
+  - npm test
   - sonar-scanner -X -Dsonar.projectVersion=${SONAR_VERSION}
