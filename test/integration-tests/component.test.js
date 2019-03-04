@@ -121,34 +121,55 @@ describe("Component creation with CLI", () => {
                 done()
             })
         })
-		})
-		
-		test("reacli component ./pre-configured-component", (testDone) => {
-			const fixture = new Tacks(Dir({
-				"package.json": File({
-					name: "this-is-a-cool-test",
-				}),
-				".reacli": File({
-					redux: true,
-					flow: true,
-					scss: true,
-				}),
-			}))
+    }) 
 
-			const componentName = "pre-configured-component"
-			const expectedPath = path.resolve(__dirname, "..", "fixtures", componentName)
-			const componentPath = path.resolve(`${fixturePath}/${componentName}`)
-	
-			withFixture(testDone, fixture, (done) => {
-					common(["component", componentPath], {
-							cwd: fixturePath,
-					}, (err, code, stdout, stderr) => {
-							const { same } = dircompare.compareSync(expectedPath, componentPath);
-							
-							expect(same).toBeTruthy()
-							expect(code).toEqual(0)
-							done()
-					})
-			})
+    test("reacli component ./extension-js-component --extension js", (testDone) => {
+        const fixture = new Tacks(Dir())
+        const componentName = "extension-js-component"
+        const expectedPath = path.resolve(__dirname, "..", "fixtures", componentName)
+        const componentPath = path.resolve(`${fixturePath}/${componentName}`)
+    
+        withFixture(testDone, fixture, (done) => {
+            common(["component", componentPath, "--extension", "js"], {
+                cwd: fixturePath,
+            }, (err, code, stdout, stderr) => {
+                const { same } = dircompare.compareSync(expectedPath, componentPath);
+                
+                expect(same).toBeTruthy()
+                expect(code).toEqual(0)
+                done()
+            })
+        })
+    })
+		
+    test("reacli component ./pre-configured-component", (testDone) => {
+        const fixture = new Tacks(Dir({
+            "package.json": File({
+                name: "this-is-a-cool-test",
+            }),
+            ".reacli": File({
+                redux: true,
+                flow: true,
+                scss: true,
+                extension: "js",
+            }),
+        }))
+        
+
+        const componentName = "pre-configured-component"
+        const expectedPath = path.resolve(__dirname, "..", "fixtures", componentName)
+        const componentPath = path.resolve(`${fixturePath}/${componentName}`)
+
+        withFixture(testDone, fixture, (done) => {
+            common(["component", componentPath], {
+                    cwd: fixturePath,
+            }, (err, code, stdout, stderr) => {
+                    const { same } = dircompare.compareSync(expectedPath, componentPath);
+                    
+                    expect(same).toBeTruthy()
+                    expect(code).toEqual(0)
+                    done()
+            })
+        })
 	})
 })
