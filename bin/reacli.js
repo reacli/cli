@@ -6,7 +6,7 @@ import pkgInfo from "pkginfo"
 import chalk from "chalk"
 import figlet from "figlet"
 
-import { createComponent, createHook, loadReacliConfigurationFileIfNotIgnored } from "../lib/core"
+import { createComponent, createHook, loadReacliConfiguration } from "../lib/core"
 import interactiveCLI from "../lib/interactiveCLI"
 import { validatePath, validateName } from "../lib/utils/validators"
 
@@ -80,7 +80,7 @@ const reactCli = async () => {
 		options = Object.assign(options, { redux: true })
 	}
 
-	options = await loadReacliConfigurationFileIfNotIgnored(program.ignoreConfigFile, process.cwd(), options)
+	options = await loadReacliConfiguration(process.cwd(), options, program.ignoreConfigFile)
 
 	createElement({
 		firstParam,
