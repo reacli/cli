@@ -8,7 +8,7 @@ import figlet from "figlet"
 
 import { createComponent, createHook, loadReacliConfiguration } from "../lib/core"
 import interactiveCLI from "../lib/interactiveCLI"
-import { validatePath, validateName } from "../lib/utils/validators"
+import { validatePath, validateName, validateExtension } from "../lib/utils/validators"
 
 const createElement = async ({ firstParam = null, pathsToComponentsToCreate = [], options = [] }) => {
 	// Cmd reacli component <path> creates a component architecture
@@ -58,6 +58,7 @@ const reactCli = async () => {
 		.option("--scss", "Use SCSS instead of classic css")
 		.option("--redux", "Add Redux to the template")
 		.option("-i, --ignore-config-file", "Ignore the '.reacli' optional configuration file")
+		.option("--extension [value]", "The file extension to use for the templates ('js' or 'jsx')")
 		.parse(process.argv)
 
 	let options = {}
@@ -78,6 +79,9 @@ const reactCli = async () => {
 	}
 	if (program.redux) {
 		options = Object.assign(options, { redux: true })
+	}
+	if (program.extension && validateExtension(program.extension)) {
+		options = Object.assign(options, { extension: program.extension })
 	}
 
 	options = await loadReacliConfiguration(process.cwd(), options, program.ignoreConfigFile)
