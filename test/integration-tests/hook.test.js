@@ -64,4 +64,23 @@ describe("Hook creation with CLI", () => {
             })
         })
     })
+
+    test("reacli hook ./extension-js-hook --extension js", (testDone) => {
+        const fixture = new Tacks(Dir())
+        const hookName = "extension-js-hook"
+        const expectedPath = path.resolve(__dirname, "..", "fixtures", hookName)
+        const hookPath = path.resolve(`${fixturePath}/${hookName}`)
+    
+        withFixture(testDone, fixture, (done) => {
+            common(["hook", hookPath, "--extension", "js"], {
+                cwd: fixturePath,
+            }, (err, code, stdout, stderr) => {
+                const { same } = dircompare.compareSync(expectedPath, hookPath);
+                
+                expect(same).toBeTruthy()
+                expect(code).toEqual(0)
+                done()
+            })
+        })
+    })
 })
