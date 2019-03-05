@@ -6,7 +6,7 @@ import pkgInfo from "pkginfo"
 import chalk from "chalk"
 import figlet from "figlet"
 
-import { createComponent, createHook, loadOptionsInConfigFileIfExists } from "../lib/core"
+import { createComponent, createHook, loadReacliConfiguration } from "../lib/core"
 import interactiveCLI from "../lib/interactiveCLI"
 import { validatePath, validateName, validateExtension } from "../lib/utils/validators"
 
@@ -57,6 +57,7 @@ const reactCli = async () => {
 		.option("-f, --flow", "Add flow to the template")
 		.option("--scss", "Use SCSS instead of classic css")
 		.option("--redux", "Add Redux to the template")
+		.option("-i, --ignore-config-file", "Ignore the '.reacli' optional configuration file")
 		.option("--extension [value]", "The file extension to use for the templates ('js' or 'jsx')")
 		.parse(process.argv)
 
@@ -64,7 +65,7 @@ const reactCli = async () => {
 	const { args } = program
 
 	if (!args.length) {
-		options = await interactiveCLI()
+		options = await interactiveCLI(program.ignoreConfigFile, options)
 	}
 
 	const firstParam = args.shift()
@@ -83,7 +84,7 @@ const reactCli = async () => {
 		options = Object.assign(options, { extension: program.extension })
 	}
 
-	options = await loadOptionsInConfigFileIfExists(process.cwd(), options)
+	options = await loadReacliConfiguration(process.cwd(), options, program.ignoreConfigFile)
 
 	createElement({
 		firstParam,
