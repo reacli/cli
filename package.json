@@ -6,7 +6,7 @@
   "scripts": {
     "precommit": "npm run lint && npm run build && npm run test",
     "test": "jest --config ./config/jest.config.js",
-    "build": "rimraf dist/ && babel ./ --out-dir dist/ --ignore ./node_modules,./test,./config,./commitlint.config.js && cp -r patterns dist/",
+    "build": "rimraf dist/ && babel ./ --out-dir dist/ --ignore ./node_modules,./test,./commitlint.config.js && cp -r patterns config dist/",
     "prepublishOnly": "npm run build",
     "commitmsg": "commitlint -e $GIT_PARAMS",
     "lint": "eslint ./bin/*.js"
