@@ -27,16 +27,20 @@ $ npx reacli -h
  |  _ <  __/ (_| | (__| | |
  |_| \_\___|\__,_|\___|_|_|
                            
-Usage: reacli [options]
+Usage: reacli [argument] [path(s)] [options]
+
+Argument:
+  component                 To create a new component
+  hook                      To create a React Hook
 
 Options:
-  -V, --version             output the version number
+  -V, --version             Output the version number
   -f, --flow                Add flow to the template
   --scss                    Use SCSS instead of classic css
   --redux                   Add Redux to the template
   -i, --ignore-config-file  Ignore the '.reacli' optional configuration file
   --extension [value]       The file extension to use for the templates ('js' or 'jsx')
-  -h, --help                output usage information
+  -h, --help                Output usage information
 ```
 
 ----
@@ -94,7 +98,7 @@ npx reacli component path/to/my/component
 
 ### Interactive CLI
 
-To facilitate the use of **Reacli**, we decided to create an interactive CLI, asking you some questions guiding you to create what you wants.
+To facilitate the use of **Reacli**, we decided to create an interactive CLI, asking you some questions guiding you to create what you want.
 
 To use it, just run:
 
@@ -107,7 +111,7 @@ reacli
 
 ### CLI features
 
-You can also use **Reacli** to directly configure what you want and win some time.
+You can also use **Reacli** to directly configure what you want and save some time.
 
 Today, **Reacli** enables to create:
 
@@ -191,9 +195,9 @@ reacli hook ./my-super-hook1 ./my-super-hook2
 
 #### Global configuration
 
-You might want to use several times **Reacli** in your project to create a lot of new components. It might be annoying having to type the different options you want to use each time you use **Reacli**.
+You might want to use several times **Reacli** in your project to create many new components. It might be annoying having to type the different options you want to use each time you use **Reacli**.
 
-That is why we enable the creation a configuration file.
+That is why we enable the creation of a configuration file.
 
 ##### Usage
 To use a global configuration, at the root of your project (next to the `package.json`), you can create a `.reacli` file. Its content, formatted as JSON, might contain the following key-value pairs:
