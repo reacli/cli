@@ -1,6 +1,6 @@
 {
   "name": "reacli",
-  "version": "1.6.4",
+  "version": "1.6.5",
   "description": "A simple and straightforward React boilerplate CLI",
   "main": "./dist/bin/reacli.js",
   "scripts": {
