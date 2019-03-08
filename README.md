@@ -106,7 +106,7 @@ To use it, just run:
 reacli
 ```
 
-![interactiveCLI](./.README/img/interactiveCLI.png "Interactive CLI")
+![interactiveCLI](.README/img/interactive-CLI.png "Interactive CLI")
 
 
 ### CLI features
