@@ -20,7 +20,7 @@ This is a React CLI that helps with boilerplate.
 
 <p align="center">
 
-  ![Alt text](./.README/img/basicUsage.svg)
+  ![Basic usage](./.README/img/basicUsage.svg)
   
 </p>
 
@@ -115,7 +115,11 @@ To use it, just run:
 reacli
 ```
 
-![interactiveCLI](.README/img/interactive-CLI.png "Interactive CLI")
+<p align="center">
+
+  ![Interactive CLI](./.README/img/interactive-CLI.svg)
+  
+</p>
 
 
 ### CLI features
