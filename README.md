@@ -18,6 +18,15 @@ This is a React CLI that helps with boilerplate.
 
 ----
 
+<p align="center">
+
+  ![Alt text](./.README/img/basicUsage.svg)
+  
+</p>
+
+
+----
+
 ```
 $ npx reacli -h
 
