@@ -5,7 +5,7 @@
   "main": "./dist/bin/reacli.js",
   "scripts": {
     "precommit": "npm run lint && npm run build && npm run test",
-    "test": "jest --config ./config/jest.config.js",
+    "test": "jest --config ./config/jest.config.js --coverage",
     "build": "rimraf dist/ && babel ./ --out-dir dist/ --ignore ./node_modules,./test,./config,./commitlint.config.js && cp -r patterns dist/",
     "prepublishOnly": "npm run build",
     "commitmsg": "commitlint -e $GIT_PARAMS",
