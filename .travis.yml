@@ -3,7 +3,11 @@ dist: trusty
 node_js:
   - "9"
   - "10"
-cache: npm
+cache:
+  directories:
+  - ./node_modules
+  - $HOME/.npm
+  - $HOME/.sonar
 addons:
   sonarcloud:
     organization: "reacli"
