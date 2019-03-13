@@ -40,6 +40,21 @@ const createElement = async ({ firstParam = null, pathsToComponentsToCreate = []
 	await Promise.all(promises)
 }
 
+const outputHelpDetails = () => {
+	console.log("")
+	console.log("Commands:")
+	console.log("  component [path(s)] [options]")
+	console.log("  hook [path(s)] [options]")
+	console.log("")
+	console.log("Examples:")
+	console.log("  Interactive CLI:")
+	console.log("    $ reacli")
+	console.log("  Create a component using Redux and Scss:")
+	console.log("    $ reacli component ./my-path/my-component --redux --scss")
+	console.log("  Create two hooks:")
+	console.log("    $ reacli hook ./my-hook1 ./my-hook-2")
+}
+
 const reactCli = async () => {
 
 	// Welcome message
@@ -62,23 +77,10 @@ const reactCli = async () => {
 		.option("-i, --ignore-config-file", "Ignore the '.reacli' optional configuration file")
 		.option("--extension [value]", "The file extension to use for the templates ('js' or 'jsx')");
 
-	program.on('--help', () => {
-		console.log('')
-		console.log('Commands:')
-		console.log('  component [path(s)] [options]')
-		console.log('  hook [path(s)] [options]')
-		console.log('')
-		console.log('Examples:')
-		console.log('  Interactive CLI:')
-		console.log('    $ reacli')
-		console.log('  Create a component using Redux and Scss:')
-		console.log('    $ reacli component ./my-path/my-component --redux --scss')
-		console.log('  Create two hooks:')
-		console.log('    $ reacli hook ./my-hook1 ./my-hook-2')
-	});
+	program.on("--help", outputHelpDetails);
 
 	program.parse(process.argv);
-		  
+
 
 	let options = {}
 	const { args } = program
