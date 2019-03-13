@@ -71,11 +71,11 @@ const reactCli = async () => {
 		.version(cliVersion)
 		.description("React CLI to create things really fast")
 		.usage("<command> [path(s)] [options]")
-		.option("-f, --flow", "Add flow to the template")
-		.option("--scss", "Use SCSS instead of classic css")
-		.option("--redux", "Add Redux to the template")
-		.option("-i, --ignore-config-file", "Ignore the '.reacli' optional configuration file")
-		.option("--extension [value]", "The file extension to use for the templates ('js' or 'jsx')");
+		.option("-f, --flow", "add flow to the template")
+		.option("--scss", "use SCSS instead of classic css")
+		.option("--redux", "add Redux to the template")
+		.option("-i, --ignore-config-file", "ignore the '.reacli' optional configuration file")
+		.option("--extension [value]", "the file extension to use for the templates ('js' or 'jsx')");
 
 	program.on("--help", outputHelpDetails);
 
