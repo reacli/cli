@@ -18,6 +18,15 @@ This is a React CLI that helps with boilerplate.
 
 ----
 
+<p align="center">
+
+  ![Basic usage](./.README/img/basicUsage.svg)
+  
+</p>
+
+
+----
+
 ```
 $ npx reacli -h
 
@@ -116,7 +125,11 @@ To use it, just run:
 reacli
 ```
 
-![interactiveCLI](.README/img/interactive-CLI.png "Interactive CLI")
+<p align="center">
+
+  ![Interactive CLI](./.README/img/interactive-CLI.svg)
+  
+</p>
 
 
 ### CLI features
