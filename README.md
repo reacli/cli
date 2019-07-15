@@ -36,20 +36,30 @@ $ npx reacli -h
  |  _ <  __/ (_| | (__| | |
  |_| \_\___|\__,_|\___|_|_|
                            
-Usage: reacli [argument] [path(s)] [options]
+Usage: reacli <command> [path(s)] [options]
 
-Argument:
-  component                 To create a new component
-  hook                      To create a React Hook
+React CLI to create things really fast
 
 Options:
-  -V, --version             Output the version number
-  -f, --flow                Add flow to the template
-  --scss                    Use SCSS instead of classic css
-  --redux                   Add Redux to the template
-  -i, --ignore-config-file  Ignore the '.reacli' optional configuration file
-  --extension [value]       The file extension to use for the templates ('js' or 'jsx')
-  -h, --help                Output usage information
+  -V, --version             output the version number
+  -f, --flow                add flow to the template
+  --scss                    use SCSS instead of classic css
+  --redux                   add Redux to the template
+  -i, --ignore-config-file  ignore the '.reacli' optional configuration file
+  --extension [value]       the file extension to use for the templates ('js' or 'jsx')
+  -h, --help                output usage information
+
+Commands:
+  component [path(s)] [options]
+  hook [path(s)] [options]
+
+Examples:
+  Interactive CLI:
+    $ reacli
+  Create a component using Redux and Scss:
+    $ reacli component ./my-path/my-component --redux --scss
+  Create two hooks:
+    $ reacli hook ./my-hook1 ./my-hook-2
 ```
 
 ----
