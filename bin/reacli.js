@@ -20,6 +20,7 @@ const createElement = async ({ firstParam = null, pathsToComponentsToCreate = []
 		if (validatePath(path) && validateName(path)) {
 			try {
 				switch (firstParam) {
+				case "c":
 				case "component":
 					promises.push(createComponent(path, options))
 					break;
@@ -40,6 +41,22 @@ const createElement = async ({ firstParam = null, pathsToComponentsToCreate = []
 	await Promise.all(promises)
 }
 
+const outputHelpDetails = () => {
+	console.log("")
+	console.log("Commands:")
+	console.log("  component [path(s)] [options]")
+	console.log("  c [path(s)] [options]")
+	console.log("  hook [path(s)] [options]")
+	console.log("")
+	console.log("Examples:")
+	console.log("  Interactive CLI:")
+	console.log("    $ reacli")
+	console.log("  Create a component using Redux and Scss:")
+	console.log("    $ reacli component ./my-path/my-component --redux --scss")
+	console.log("  Create two hooks:")
+	console.log("    $ reacli hook ./my-hook1 ./my-hook-2")
+}
+
 const reactCli = async () => {
 
 	// Welcome message
@@ -54,12 +71,18 @@ const reactCli = async () => {
 	// Define cli options
 	program
 		.version(cliVersion)
-		.option("-f, --flow", "Add flow to the template")
-		.option("--scss", "Use SCSS instead of classic css")
-		.option("--redux", "Add Redux to the template")
-		.option("-i, --ignore-config-file", "Ignore the '.reacli' optional configuration file")
-		.option("--extension [value]", "The file extension to use for the templates ('js' or 'jsx')")
-		.parse(process.argv)
+		.description("React CLI to create things really fast")
+		.usage("<command> [path(s)] [options]")
+		.option("-f, --flow", "add flow to the template")
+		.option("--scss", "use SCSS instead of classic css")
+		.option("--redux", "add Redux to the template")
+		.option("-i, --ignore-config-file", "ignore the '.reacli' optional configuration file")
+		.option("--extension [value]", "the file extension to use for the templates ('js' or 'jsx')");
+
+	program.on("--help", outputHelpDetails);
+
+	program.parse(process.argv);
+
 
 	let options = {}
 	const { args } = program
