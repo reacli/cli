@@ -19,16 +19,12 @@ const createElement = async ({ firstParam = null, pathsToComponentsToCreate = []
 
 		if (validatePath(path) && validateName(path)) {
 			try {
-				switch (firstParam) {
-				case "component":
+				if (firstParam === "component") {
 					promises.push(createComponent(path, options))
-					break;
-				case "hook":
+				} else if (firstParam === "hook") {
 					promises.push(createHook(path, options))
-					break;
-				default:
+				} else {
 					program.outputHelp()
-					break;
 				}
 			} catch (error) {
 				console.log("ERROR: ", error)
